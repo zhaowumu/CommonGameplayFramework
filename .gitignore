@@ -2,3 +2,8 @@
 /MobileGame/.idea
 /MobileGame/Saved
 /MobileGame/Binaries
+MobileGame/.vsconfig
+/MobileGame/.vs
+MobileGame/MobileGame.sln
+/MobileGame/Plugins/CommonGameplayFramework/Binaries
+/MobileGame/Plugins/CommonGameplayFramework/Intermediate/Build
