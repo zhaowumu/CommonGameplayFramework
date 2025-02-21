@@ -7,3 +7,5 @@ MobileGame/.vsconfig
 MobileGame/MobileGame.sln
 /MobileGame/Plugins/CommonGameplayFramework/Binaries
 /MobileGame/Plugins/CommonGameplayFramework/Intermediate/Build
+/MobileGame/Plugins/ModularGameplayActors/Binaries
+/MobileGame/Plugins/ModularGameplayActors/Intermediate
