@@ -20,6 +20,7 @@ struct FFrame;
 
 /**
  * The state of an async load operation for the UI.
+ * UI异步加载状态
  */
 enum class EAsyncWidgetLayerState : uint8
 {

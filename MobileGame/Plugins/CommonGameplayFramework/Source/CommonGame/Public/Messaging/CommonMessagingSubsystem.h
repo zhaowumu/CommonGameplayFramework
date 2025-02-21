@@ -28,7 +28,7 @@ enum class ECommonMessagingResult : uint8
 DECLARE_DELEGATE_OneParam(FCommonMessagingResultDelegate, ECommonMessagingResult /* Result */);
 
 /**
- * 
+ * 通用消息子系统
  */
 UCLASS(config = Game)
 class COMMONGAME_API UCommonMessagingSubsystem : public ULocalPlayerSubsystem

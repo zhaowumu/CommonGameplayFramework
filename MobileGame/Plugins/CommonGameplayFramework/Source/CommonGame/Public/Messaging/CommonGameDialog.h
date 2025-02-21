@@ -53,7 +53,9 @@ public:
 	TArray<FConfirmationDialogAction> ButtonActions;
 };
 
-
+/*
+ * 通用对话框
+ */
 UCLASS(Abstract)
 class COMMONGAME_API UCommonGameDialog : public UCommonActivatableWidget
 {

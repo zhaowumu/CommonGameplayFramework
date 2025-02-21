@@ -20,6 +20,11 @@ class UObject;
 struct FFrame;
 struct FGameplayTag;
 
+
+/*
+ * 用于处理游戏实例的通用逻辑，包括用户管理、会话管理、错误处理等
+ * 抽象类，不能被直接实例化，并且它的配置信息存储在 Game 配置文件中。
+ */
 UCLASS(Abstract, Config = Game)
 class COMMONGAME_API UCommonGameInstance : public UGameInstance
 {
@@ -28,17 +33,27 @@ class COMMONGAME_API UCommonGameInstance : public UGameInstance
 public:
 	UCommonGameInstance(const FObjectInitializer& ObjectInitializer);
 	
-	/** Handles errors/warnings from CommonUser, can be overridden per game */
+	/** Handles errors/warnings from CommonUser, can be overridden per game
+	 * 处理来自CommonUser的错误/警告，可以按游戏覆盖
+	 */
 	UFUNCTION()
 	virtual void HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message);
 
+	/*
+	 * 处理权限已更改
+	 */
 	UFUNCTION()
 	virtual void HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability);
 
+	/*
+	 * 处理用户已初始化
+	 */
 	UFUNCTION()
 	virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
 
-	/** Call to reset user and session state, usually because a player has been disconnected */
+	/** Call to reset user and session state, usually because a player has been disconnected
+	 * 重置用户和会话状态，通常是因为玩家已断开连接
+	 */
 	virtual void ResetUserAndSessionState();
 
 	/**

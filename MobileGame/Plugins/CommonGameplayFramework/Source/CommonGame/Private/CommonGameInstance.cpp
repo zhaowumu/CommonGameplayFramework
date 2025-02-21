@@ -24,6 +24,7 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 {
 	ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
 	// Forward severe ones to the error dialog for the first player
+	// 如果消息类型是错误类型，它会将错误消息显示给第一个玩家。
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
 		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
@@ -36,6 +37,7 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability)
 {
 	// By default show errors and disconnect if play privilege for first player is lost
+	// 如果玩家权限被取消，则显示错误消息并断开连接。
 	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable && NewAvailability != ECommonUserAvailability::NowAvailable)
 	{
 		UE_LOG(LogCommonGame, Error, TEXT("HandlePrivilegeChanged: Player %d no longer has permission to play the game!"), UserInfo->LocalPlayerIndex);
@@ -128,6 +130,7 @@ void UCommonGameInstance::ReturnToMainMenu()
 
 void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult)
 {
+	// 如何会话有效
 	if (InRequestedSession)
 	{
 		SetRequestedSession(InRequestedSession);

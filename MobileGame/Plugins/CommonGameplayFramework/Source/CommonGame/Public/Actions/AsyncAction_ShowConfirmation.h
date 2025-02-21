@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonMessagingResultMCDelegate, EC
 
 /**
  * Allows easily triggering an async confirmation dialog in blueprints that you can then wait on the result.
+ * 允许在蓝图中轻松触发异步确认对话框，然后您可以等待结果。
  */
 UCLASS()
 class UAsyncAction_ShowConfirmation : public UBlueprintAsyncActionBase

@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCreateWidgetAsyncDelegate, UUserWid
 
 /**
  * Load the widget class asynchronously, the instance the widget after the loading completes, and return it on OnComplete.
+ * 异步创建Widget
  */
 UCLASS(BlueprintType)
 class COMMONGAME_API UAsyncAction_CreateWidgetAsync : public UCancellableAsyncAction
