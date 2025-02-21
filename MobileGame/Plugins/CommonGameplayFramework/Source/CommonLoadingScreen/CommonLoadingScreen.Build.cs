@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CommonGameplayFramework : ModuleRules
+public class CommonLoadingScreen : ModuleRules
 {
-	public CommonGameplayFramework(ReadOnlyTargetRules Target) : base(Target)
+	public CommonLoadingScreen(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -37,10 +37,12 @@ public class CommonGameplayFramework : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore", 
-				// ... 依赖模块
-				"ModularGameplayActors",
-				// ... add private dependencies that you statically link with here ...	
+				"SlateCore",
+				"InputCore",
+				"PreLoadScreen",
+				"RenderCore",
+				"DeveloperSettings",
+				"UMG"
 			}
 			);
 		

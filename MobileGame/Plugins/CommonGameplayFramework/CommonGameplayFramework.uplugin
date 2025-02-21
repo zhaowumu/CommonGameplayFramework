@@ -19,7 +19,33 @@
       "Name": "CommonGameplayFramework",
       "Type": "Runtime",
       "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ModularGameplayActors",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CommonGame",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CommonUser",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CommonLoadingScreen",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CommonStartupLoadingScreen",
+      "Type": "ClientOnly",
+      "LoadingPhase": "PreLoadingScreen"
     }
+    
   ],
   "Plugins": [
     {
@@ -28,10 +54,6 @@
     },
     {
       "Name": "ModularGameplay",
-      "Enabled": true
-    },
-    {
-      "Name": "ModularGameplayActors",
       "Enabled": true
     },
     {

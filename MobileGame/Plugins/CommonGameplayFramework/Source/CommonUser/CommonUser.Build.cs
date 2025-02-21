@@ -2,12 +2,14 @@
 
 using UnrealBuildTool;
 
-public class CommonGameplayFramework : ModuleRules
+public class CommonUser : ModuleRules
 {
-	public CommonGameplayFramework(ReadOnlyTargetRules Target) : base(Target)
+	public CommonUser(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+
+		bool bUseOnlineSubsystemV1 = true;
+
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
@@ -26,20 +28,34 @@ public class CommonGameplayFramework : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreOnline",
+				"GameplayTags",
+				"OnlineSubsystemUtils",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
-			
-		
+
+		if (bUseOnlineSubsystemV1)
+		{
+			PublicDependencyModuleNames.Add("OnlineSubsystem");
+		}
+		else
+		{
+			PublicDependencyModuleNames.Add("OnlineServicesInterface");
+		}
+
+		PublicDefinitions.Add("COMMONUSER_OSSV1=" + (bUseOnlineSubsystemV1 ? "1" : "0"));
+
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"CoreOnline",
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore", 
-				// ... 依赖模块
-				"ModularGameplayActors",
+				"SlateCore",
+				"ApplicationCore",
+				"InputCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
