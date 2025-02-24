@@ -39,12 +39,13 @@ public class CommonGameplay : ModuleRules
 				"Slate",
 				"SlateCore", 
 				// ... 依赖模块
-				"ModularGameplayActors",
+				"ModularGameplayActors", "CommonGame",
 				// ... GAS
 				"GameplayTags", "GameplayTasks", "GameplayAbilities",
 				"AIModule",
 				"DeveloperSettings",
-				"EnhancedInput"
+				"EnhancedInput",
+				"UMG"
 			}
 			);
 		
