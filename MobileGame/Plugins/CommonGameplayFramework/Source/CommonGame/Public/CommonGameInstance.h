@@ -66,14 +66,22 @@ public:
 	/** Handles user accepting a session invite from an external source (for example, a platform overlay). Intended to be overridden per game. */
 	virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult);
 
-	/** Handles OSS request that the session be destroyed */
+	/** Handles OSS request that the session be destroyed
+	 * 处理OSS请求销毁会话
+	 */
 	virtual void OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName);
 
-	/** Get the requested session */
+	/** Get the requested session
+	 * 获取请求会话
+	 */
 	UCommonSession_SearchResult* GetRequestedSession() const { return RequestedSession; }
-	/** Set (or clear) the requested session. When this is set, the requested session flow begins. */
+	/** Set (or clear) the requested session. When this is set, the requested session flow begins.
+	 * 设置（或清除）请求会话。当设置时，请求会话流程开始。
+	 */
 	virtual void SetRequestedSession(UCommonSession_SearchResult* InRequestedSession);
-	/** Checks if the requested session can be joined. Can be overridden per game. */
+	/** Checks if the requested session can be joined. Can be overridden per game.
+	 * 检查请求的会话是否可以加入。每个游戏都可以被覆盖。
+	 */
 	virtual bool CanJoinRequestedSession() const;
 	/** Join the requested session */
 	virtual void JoinRequestedSession();

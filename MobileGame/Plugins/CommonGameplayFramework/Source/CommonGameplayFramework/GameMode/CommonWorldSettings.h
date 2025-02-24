@@ -18,4 +18,8 @@ class COMMONGAMEPLAYFRAMEWORK_API ACommonWorldSettings : public AWorldSettings
 
 public:
 	ACommonWorldSettings(const FObjectInitializer& ObjectInitializer);
+
+#if WITH_EDITOR
+	virtual void CheckForErrors() override;
+#endif
 };

@@ -144,6 +144,7 @@ void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& Platform
 void UCommonGameInstance::OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName)
 {
 	// When a session destroy is requested, please make sure that your project is in the right state to destroy the session and transition out of it
+	// 当请求销毁会话时，请确保您的项目处于正确的状态，可以销毁会话并从中转换出来
 
 	UE_LOG(LogCommonGame, Verbose, TEXT("[%hs] PlatformUserId:%d, SessionName: %s)"), __FUNCTION__, PlatformUserId.GetInternalId(), *SessionName.ToString());
 
