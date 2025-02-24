@@ -40,7 +40,11 @@ public class CommonGameplay : ModuleRules
 				"SlateCore", 
 				// ... 依赖模块
 				"ModularGameplayActors",
-				// ... add private dependencies that you statically link with here ...	
+				// ... GAS
+				"GameplayTags", "GameplayTasks", "GameplayAbilities",
+				"AIModule",
+				"DeveloperSettings",
+				"EnhancedInput"
 			}
 			);
 		

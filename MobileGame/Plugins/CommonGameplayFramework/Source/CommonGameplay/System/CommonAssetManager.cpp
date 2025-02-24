@@ -90,6 +90,7 @@ void UCommonAssetManager::StartInitialLoading()
 	// TODO 这里没有使用官方的FLyraAssetManagerStartupJob
 	InitializeGameplayCueManager();
 	
+	
 	/*
 	STARTUP_JOB(InitializeGameplayCueManager());
 	{

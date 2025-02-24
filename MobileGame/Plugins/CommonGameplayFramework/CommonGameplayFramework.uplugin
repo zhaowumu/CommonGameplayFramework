@@ -45,7 +45,6 @@
       "Type": "ClientOnly",
       "LoadingPhase": "PreLoadingScreen"
     }
-    
   ],
   "Plugins": [
     {
@@ -62,6 +61,10 @@
     },
     {
       "Name": "EnhancedInput",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayAbilities",
       "Enabled": true
     }
   ]
