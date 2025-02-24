@@ -10,7 +10,7 @@
  * 通用Pawn
  */
 UCLASS()
-class COMMONGAMEPLAYFRAMEWORK_API ACommonPawn : public AModularPawn
+class COMMONGAMEPLAY_API ACommonPawn : public AModularPawn
 {
 	GENERATED_BODY()
 

@@ -10,7 +10,7 @@
  * 通用游戏模式
  */
 UCLASS(Config = Game)
-class COMMONGAMEPLAYFRAMEWORK_API ACommonGameModeBase : public AModularGameModeBase
+class COMMONGAMEPLAY_API ACommonGameModeBase : public AModularGameModeBase
 {
 	GENERATED_BODY()
 

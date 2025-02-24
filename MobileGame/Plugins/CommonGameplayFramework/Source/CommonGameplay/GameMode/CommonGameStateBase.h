@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class COMMONGAMEPLAYFRAMEWORK_API ACommonGameStateBase : public AGameStateBase
+class COMMONGAMEPLAY_API ACommonGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
 public:

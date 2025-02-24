@@ -10,7 +10,7 @@
  * 通用玩家状态
  */
 UCLASS(Config = Game)
-class COMMONGAMEPLAYFRAMEWORK_API ACommonPlayerState : public AModularPlayerState
+class COMMONGAMEPLAY_API ACommonPlayerState : public AModularPlayerState
 {
 	GENERATED_BODY()
 

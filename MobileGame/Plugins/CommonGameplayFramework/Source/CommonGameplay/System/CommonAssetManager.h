@@ -17,7 +17,7 @@
  *  此类通过在DefaultEngine.ini中设置“AssetManagerClassName”来使用。
  */
 UCLASS(Config = Game)
-class COMMONGAMEPLAYFRAMEWORK_API UCommonAssetManager : public UAssetManager
+class COMMONGAMEPLAY_API UCommonAssetManager : public UAssetManager
 {
 	GENERATED_BODY()
 

@@ -10,7 +10,7 @@
  * 通用角色基类
  */
 UCLASS()
-class COMMONGAMEPLAYFRAMEWORK_API ACommonCharacter : public AModularCharacter
+class COMMONGAMEPLAY_API ACommonCharacter : public AModularCharacter
 {
 	GENERATED_BODY()
 	

@@ -4,7 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
-class FCommonGameplayFrameworkModule : public IModuleInterface
+class FCommonGameplayModule : public IModuleInterface
 {
 public:
 

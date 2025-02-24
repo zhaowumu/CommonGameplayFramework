@@ -12,7 +12,7 @@
  * 每个 Level 中只能有一个 AWorldSettings 实例。它始终位于 ULevel::Actors[0] 的位置，方便快速访问。
  */
 UCLASS()
-class COMMONGAMEPLAYFRAMEWORK_API ACommonWorldSettings : public AWorldSettings
+class COMMONGAMEPLAY_API ACommonWorldSettings : public AWorldSettings
 {
 	GENERATED_BODY()
 
