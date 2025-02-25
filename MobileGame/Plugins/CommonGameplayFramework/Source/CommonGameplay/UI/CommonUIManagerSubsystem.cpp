@@ -3,11 +3,11 @@
 
 #include "CommonUIManagerSubsystem.h"
 
-#include "CommonLocalPlayer.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/HUD.h"
 #include "GameUIPolicy.h"
 #include "PrimaryGameLayout.h"
+#include "CommonGameplay/Player/CommonLocalPlayer.h"
 
 UCommonUIManagerSubsystem::UCommonUIManagerSubsystem()
 {

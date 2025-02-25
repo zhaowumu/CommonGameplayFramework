@@ -26,11 +26,6 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "CommonGame",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
       "Name": "CommonUser",
       "Type": "Runtime",
       "LoadingPhase": "Default"

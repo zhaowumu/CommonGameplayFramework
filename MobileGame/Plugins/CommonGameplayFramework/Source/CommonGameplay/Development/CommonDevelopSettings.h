@@ -22,12 +22,8 @@ public:
 	{
 		return FName("Game");
 	}
-
-
 	
 	// 默认使用使用MoviePlayer
 	UPROPERTY(config, EditAnywhere, Category=LoadingScreen, meta=(MetaClass="/Script/UMG.UserWidget"))
 	FSoftClassPath LoadingScreenWidget;
-	
-
 };
