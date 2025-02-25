@@ -21,7 +21,7 @@ class COMMONGAMEPLAY_API UCommonLocalPlayer : public ULocalPlayer
 
 public:
 	UCommonLocalPlayer();
-
+	
 	/** Called when the local player is assigned a player controller */
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController);
 	FPlayerControllerSetDelegate OnPlayerControllerSet;

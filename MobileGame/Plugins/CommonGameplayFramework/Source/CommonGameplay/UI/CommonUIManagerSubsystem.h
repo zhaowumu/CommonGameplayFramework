@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS(config=CommonUISettings, defaultconfig, meta=(DisplayName="CommonUISettings"))
+UCLASS()
 class COMMONGAMEPLAY_API UCommonUIManagerSubsystem : public UGameUIManagerSubsystem
 {
 	GENERATED_BODY()
