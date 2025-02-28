@@ -110,7 +110,7 @@ private:
 	TArray<FRootViewportLayoutInfo> RootViewportLayouts;
 
 private:
-	// 玩家添加、移除、销毁事件回调通知
+	// 玩家添加、移除、销毁事件回调通知（在这里具体执行添加UI布局）
 	void NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer);
 	void NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer);
 	void NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPlayer);

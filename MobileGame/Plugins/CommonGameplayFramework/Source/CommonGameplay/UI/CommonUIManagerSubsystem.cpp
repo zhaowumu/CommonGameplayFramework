@@ -48,13 +48,15 @@ void UCommonUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
 		for (const ULocalPlayer* LocalPlayer : GetGameInstance()->GetLocalPlayers())
 		{
 			bool bShouldShowUI = true;
-			
+
+			// 获取玩家控制器
 			if (const APlayerController* PC = LocalPlayer->GetPlayerController(GetWorld()))
 			{
 				const AHUD* HUD = PC->GetHUD();
 
 				if (HUD && !HUD->bShowHUD)
 				{
+					// 同步 显示状态
 					bShouldShowUI = false;
 				}
 			}

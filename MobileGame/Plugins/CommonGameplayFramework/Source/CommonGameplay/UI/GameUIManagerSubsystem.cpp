@@ -4,6 +4,8 @@
 
 #include "Engine/GameInstance.h"
 #include "GameUIPolicy.h"
+#include "CommonGameplay/Player/CommonLocalPlayer.h"
+#include "CommonGameplay/System/CommonLogChannels.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameUIManagerSubsystem)
 
@@ -46,6 +48,11 @@ void UGameUIManagerSubsystem::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
 {
 	if (ensure(LocalPlayer) && CurrentPolicy)
 	{
+		// TODO 添加玩家提示
+
+		UE_LOG(LogCommon, Warning, TEXT("UGameUIManagerSubsystem::NotifyPlayerAdded %s to Primary Player"),
+		       *LocalPlayer->GetName());
+
 		CurrentPolicy->NotifyPlayerAdded(LocalPlayer);
 	}
 }
@@ -54,6 +61,9 @@ void UGameUIManagerSubsystem::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlaye
 {
 	if (LocalPlayer && CurrentPolicy)
 	{
+		UE_LOG(LogCommon, Warning, TEXT("UGameUIManagerSubsystem::NotifyPlayerRemoved %s to Primary Player"),
+		       *LocalPlayer->GetName());
+
 		CurrentPolicy->NotifyPlayerRemoved(LocalPlayer);
 	}
 }
@@ -62,6 +72,9 @@ void UGameUIManagerSubsystem::NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPla
 {
 	if (LocalPlayer && CurrentPolicy)
 	{
+		UE_LOG(LogCommon, Warning, TEXT("UGameUIManagerSubsystem::NotifyPlayerDestroyed %s to Primary Player"),
+		       *LocalPlayer->GetName());
+
 		CurrentPolicy->NotifyPlayerDestroyed(LocalPlayer);
 	}
 }
@@ -73,4 +86,3 @@ void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
 		CurrentPolicy = InPolicy;
 	}
 }
-

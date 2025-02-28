@@ -8,7 +8,7 @@
 #include "CommonUIManagerSubsystem.generated.h"
 
 /**
- * 
+ * 通用UI子系统
  */
 UCLASS()
 class COMMONGAMEPLAY_API UCommonUIManagerSubsystem : public UGameUIManagerSubsystem
