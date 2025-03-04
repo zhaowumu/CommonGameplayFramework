@@ -46,6 +46,7 @@ public class CommonGameplay : ModuleRules
 				"DeveloperSettings",
 				"UMG","CommonUI",
 				"InputCore","EnhancedInput","CommonInput",
+				"AudioMixer","AudioModulation"
 			}
 			);
 		
