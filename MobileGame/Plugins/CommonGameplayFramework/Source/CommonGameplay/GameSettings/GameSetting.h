@@ -43,23 +43,29 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EGameSettingValueType SettingValueType = EGameSettingValueType::BoolValue;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::BoolValue"))
 	bool BoolValue = false;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::FloatValue"))
 	float FloatValue = 0.0f;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::IntValue"))
 	int32 IntValue = 0;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::StringValue"))
 	FString StringValue = FString();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::KeyValue"))
 	FKey KeyValue = FKey();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	uint8 EnumValue = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::EnumValue"))
+	uint8 EnumValue = 0;
 };
 
 /*
@@ -91,7 +97,7 @@ public:
  * 3.支持事件回调 允许外部监听设置的更改，并在必要时做出响应。
  * 4.支持搜索与分析 提供可搜索文本及分析数据上报功能。
  */
-UCLASS(Abstract, BlueprintType)
+UCLASS(BlueprintType)
 class COMMONGAMEPLAY_API UGameSetting : public UObject
 {
 	GENERATED_BODY()
