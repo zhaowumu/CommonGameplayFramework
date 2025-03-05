@@ -7,10 +7,14 @@
 #include "CommonAudioSubsystem.generated.h"
 
 /**
- * 通用设置？
+ * 通用音频设置？
  */
 UCLASS()
 class COMMONGAMEPLAY_API UCommonAudioSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
+public:
+
+	
 };

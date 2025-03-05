@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonGameplay/GameSettings/GameSetting.h"
 #include "Engine/DataTable.h"
 #include "Engine/DeveloperSettings.h"
 #include "CommonDevelopSettings.generated.h"
@@ -18,8 +19,10 @@ struct COMMONGAMEPLAY_API FCommonSubmixEffectChainMap
 
 	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "/Script/Engine.SoundEffectSubmixPreset"))
 	TArray<TSoftObjectPtr<USoundEffectSubmixPreset>> SubmixEffectChain;
-
 };
+
+
+
 
 class UGameUIPolicy;
 /**
@@ -35,7 +38,15 @@ public:
 	{
 		return FName("Game");
 	}
-	
+
+	UFUNCTION(BlueprintPure, meta=(DisplayName="GetCommonDeveloperSettings"))
+	static const UCommonDeveloperSettings* Get()
+	{
+		const UCommonDeveloperSettings* Settings = GetDefault<UCommonDeveloperSettings>();
+		return Settings;
+	}
+
+public:
 	// 默认使用使用MoviePlayer
 	UPROPERTY(config, EditAnywhere, Category=LoadingScreen, meta=(MetaClass="/Script/UMG.UserWidget"))
 	FSoftClassPath LoadingScreenWidget;
@@ -43,46 +54,60 @@ public:
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> UIPolicyClass;
 
+	UPROPERTY(config, EditAnywhere, Category = GameSettings)
+	TSoftObjectPtr<UDataTable> GameSettingDataTable;
+
+	UFUNCTION(BlueprintPure, Category=GameSettings)
+	static TArray<FCommonSettingCfgData> GetAllGameSettingDataList();
+
+
 #pragma region 音频设置
 	/** The Default Base Control Bus Mix */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
 	FSoftObjectPath DefaultControlBusMix;
 
 	/** The Loading Screen Control Bus Mix - Called during loading screens to cover background audio events */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
 	FSoftObjectPath LoadingScreenControlBusMix;
 
 	/** The Default Base Control Bus Mix */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBusMix"))
 	FSoftObjectPath UserSettingsControlBusMix;
 
 	/** Control Bus assigned to the Overall sound volume setting */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
 	FSoftObjectPath OverallVolumeControlBus;
 
 	/** Control Bus assigned to the Music sound volume setting */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
 	FSoftObjectPath MusicVolumeControlBus;
 
 	/** Control Bus assigned to the SoundFX sound volume setting */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
 	FSoftObjectPath SoundFXVolumeControlBus;
 
 	/** Control Bus assigned to the Dialogue sound volume setting */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
 	FSoftObjectPath DialogueVolumeControlBus;
 
 	/** Control Bus assigned to the VoiceChat sound volume setting */
-	UPROPERTY(config, EditAnywhere, Category = AudioSettings, meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
+	UPROPERTY(config, EditAnywhere, Category = AudioSettings,
+		meta = (AllowedClasses = "/Script/AudioModulation.SoundControlBus"))
 	FSoftObjectPath VoiceChatVolumeControlBus;
 
 	/** Submix Processing Chains to achieve high dynamic range audio output */
 	UPROPERTY(config, EditAnywhere, Category = AudioSettings)
 	TArray<FCommonSubmixEffectChainMap> HDRAudioSubmixEffectChain;
-	
+
 	/** Submix Processing Chains to achieve low dynamic range audio output */
 	UPROPERTY(config, EditAnywhere, Category = AudioSettings)
 	TArray<FCommonSubmixEffectChainMap> LDRAudioSubmixEffectChain;
 #pragma endregion
-	
 };
