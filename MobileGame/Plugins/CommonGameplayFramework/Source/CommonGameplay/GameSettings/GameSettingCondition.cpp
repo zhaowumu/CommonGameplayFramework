@@ -2,3 +2,12 @@
 
 
 #include "GameSettingCondition.h"
+
+
+void UGameSettingCondition::SetSettingShow(bool bShow)
+{
+	if (ParentSetting)
+	{
+		ParentSetting->OnCondition_ShowDelegate.ExecuteIfBound(bShow);
+	}
+}

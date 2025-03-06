@@ -59,8 +59,7 @@ FGameSettingValue UGameSetting::GetCurrentValue() const
 void UGameSetting::SetCurrentValue(FGameSettingValue Value)
 {
 	GameSettingValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 bool UGameSetting::GetCurrentValue_Bool()
@@ -71,8 +70,7 @@ bool UGameSetting::GetCurrentValue_Bool()
 void UGameSetting::SetCurrentValue_Bool(bool Value)
 {
 	GameSettingValue.BoolValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 float UGameSetting::GetCurrentValue_Float()
@@ -83,8 +81,7 @@ float UGameSetting::GetCurrentValue_Float()
 void UGameSetting::SetCurrentValue_Float(float Value)
 {
 	GameSettingValue.FloatValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 int UGameSetting::GetCurrentValue_Int()
@@ -95,8 +92,7 @@ int UGameSetting::GetCurrentValue_Int()
 void UGameSetting::SetCurrentValue_Int(int Value)
 {
 	GameSettingValue.IntValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 int UGameSetting::GetCurrentValue_Enum()
@@ -108,8 +104,7 @@ int UGameSetting::GetCurrentValue_Enum()
 void UGameSetting::SetCurrentValue_Enum(int Value)
 {
 	GameSettingValue.EnumValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 FString UGameSetting::GetCurrentValue_String()
@@ -120,8 +115,7 @@ FString UGameSetting::GetCurrentValue_String()
 void UGameSetting::SetCurrentValue_String(FString Value)
 {
 	GameSettingValue.StringValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 FKey UGameSetting::GetCurrentValue_Key()
@@ -132,8 +126,7 @@ FKey UGameSetting::GetCurrentValue_Key()
 void UGameSetting::SetCurrentValue_Key(FKey Value)
 {
 	GameSettingValue.KeyValue = Value;
-	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
-	OnDependencyParentSettingChangedEvent.Broadcast(this);
+	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 void UGameSetting::AddDependencyParentSetting(UGameSetting* DependencyParentSetting)
@@ -143,10 +136,6 @@ void UGameSetting::AddDependencyParentSetting(UGameSetting* DependencyParentSett
 		DependencyParentSetting->OnDependencyParentSettingChangedEvent.AddUObject(
 			this, &ThisClass::HandleDependencyParentSettingChanged);
 	}
-}
-
-void UGameSetting::HandleDependencySettingChanged(UGameSetting* DependencySetting, EGameSettingChangeReason Reason)
-{
 }
 
 void UGameSetting::HandleDependencyParentSettingChanged(UGameSetting* DependencyParentSetting)
@@ -168,22 +157,18 @@ void UGameSetting::RefreshEditableState()
 	}
 }
 
+void UGameSetting::SetSettingEnable(bool bEnable)
+{
+	OnCondition_EnableDelegate.Broadcast(bEnable);
+}
+
 
 void UGameSetting::NotifySettingChanged(EGameSettingChangeReason Reason)
 {
+	OnSettingChangedEvent.Broadcast(this, Reason);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
 }
 
-void UGameSetting::OnSettingChanged(EGameSettingChangeReason Reason)
-{
-}
-
-void UGameSetting::NotifyEditConditionsChanged()
-{
-}
-
-void UGameSetting::OnEditConditionsChanged()
-{
-}
 
 
 void UGameSetting::Initialize(ULocalPlayer* InLocalPlayer)

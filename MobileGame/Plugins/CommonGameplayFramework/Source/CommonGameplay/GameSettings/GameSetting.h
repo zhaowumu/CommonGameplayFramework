@@ -217,17 +217,14 @@ public:
 	/**
 	 * 绑定回调，我依赖的设置项发生了改变，那我就要重新评估自己的可编辑状态
 	 */
-	void HandleDependencySettingChanged(UGameSetting* DependencySetting, EGameSettingChangeReason Reason);
 	void HandleDependencyParentSettingChanged(UGameSetting* DependencyParentSetting);
+
+	//void HandleDependencySettingChanged(UGameSetting* DependencySetting, EGameSettingChangeReason Reason);
 
 	/** Notify that the setting changed */
 	void NotifySettingChanged(EGameSettingChangeReason Reason);
-	virtual void OnSettingChanged(EGameSettingChangeReason Reason);
 
-	/** Notify that the settings edit conditions changed.  This may mean it's now invisible, or disabled, or possibly that the options have changed in some meaningful way. */
-	void NotifyEditConditionsChanged();
-	virtual void OnEditConditionsChanged();
-
+	
 
 	void Initialize(ULocalPlayer* InLocalPlayer);
 
@@ -235,6 +232,17 @@ public:
     * 刷新可编辑状态，如何不可编辑就要设置为默认值
     */
 	virtual void RefreshEditableState();
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCondition_Enable, bool, bEnable);
+	UPROPERTY(BlueprintAssignable)
+	FOnCondition_Enable OnCondition_EnableDelegate;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSettingEnable(bool bEnable);
+
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Show, bool, bShow);
+	FOnCondition_Show OnCondition_ShowDelegate;
 
 	void Apply();
 

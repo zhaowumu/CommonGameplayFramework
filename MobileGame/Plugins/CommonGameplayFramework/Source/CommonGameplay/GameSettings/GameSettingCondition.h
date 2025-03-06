@@ -16,7 +16,7 @@ class COMMONGAMEPLAY_API UGameSettingCondition : public UObject
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UGameSetting> SelfSetting;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -27,4 +27,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ThenDo(bool bConditionMet) const;
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetSettingShow(bool bShow);
 };
