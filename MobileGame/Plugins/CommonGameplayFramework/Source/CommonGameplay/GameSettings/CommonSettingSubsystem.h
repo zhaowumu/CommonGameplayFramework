@@ -19,6 +19,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	UCommonSettingData* GetLocalPlayerGameSettingData(ULocalPlayer* InLocalPlayer);
 
+
+	UFUNCTION(BlueprintPure)
+	TArray<UGameSetting*> GetLocalPlayerGameSetting(ULocalPlayer* InLocalPlayer);
 private:
 
 	UPROPERTY()

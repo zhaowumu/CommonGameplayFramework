@@ -21,10 +21,15 @@ public:
 	void Initialize(ULocalPlayer* InLocalPlayer);
 
 
+	UFUNCTION(BlueprintPure)
+	UGameSetting* FindGameSettingByKey(const FName& Key);
+	
+
+
 	UPROPERTY(Transient)
 	TObjectPtr<ULocalPlayer> OwningLocalPlayer;
 
 	/** The settings owned by this collection. */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	TArray<TObjectPtr<UGameSetting>> Settings;
 };

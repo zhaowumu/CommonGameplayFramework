@@ -3,6 +3,8 @@
 
 #include "GameSetting.h"
 
+#include "GameSettingCondition.h"
+
 UWorld* UGameSetting::GetWorld() const
 {
 	return LocalPlayer ? LocalPlayer->GetWorld() : nullptr;
@@ -49,12 +51,95 @@ void UGameSetting::SetDefaultValue_Key(FKey Value)
 	DefaultSettingValue.KeyValue = Value;
 }
 
+FGameSettingValue UGameSetting::GetCurrentValue() const
+{
+	return GameSettingValue;
+}
+
+void UGameSetting::SetCurrentValue(FGameSettingValue Value)
+{
+	GameSettingValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+bool UGameSetting::GetCurrentValue_Bool()
+{
+	return GameSettingValue.BoolValue;
+}
+
+void UGameSetting::SetCurrentValue_Bool(bool Value)
+{
+	GameSettingValue.BoolValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+float UGameSetting::GetCurrentValue_Float()
+{
+	return GameSettingValue.FloatValue;
+}
+
+void UGameSetting::SetCurrentValue_Float(float Value)
+{
+	GameSettingValue.FloatValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+int UGameSetting::GetCurrentValue_Int()
+{
+	return GameSettingValue.IntValue;
+}
+
+void UGameSetting::SetCurrentValue_Int(int Value)
+{
+	GameSettingValue.IntValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+int UGameSetting::GetCurrentValue_Enum()
+{
+	return GameSettingValue.EnumValue;
+}
+
+
+void UGameSetting::SetCurrentValue_Enum(int Value)
+{
+	GameSettingValue.EnumValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+FString UGameSetting::GetCurrentValue_String()
+{
+	return GameSettingValue.StringValue;
+}
+
+void UGameSetting::SetCurrentValue_String(FString Value)
+{
+	GameSettingValue.StringValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
+FKey UGameSetting::GetCurrentValue_Key()
+{
+	return GameSettingValue.KeyValue;
+}
+
+void UGameSetting::SetCurrentValue_Key(FKey Value)
+{
+	GameSettingValue.KeyValue = Value;
+	OnSettingChangedEvent.Broadcast(this, EGameSettingChangeReason::Change);
+	OnDependencyParentSettingChangedEvent.Broadcast(this);
+}
+
 void UGameSetting::AddDependencyParentSetting(UGameSetting* DependencyParentSetting)
 {
 	if (ensure(DependencyParentSetting))
 	{
-		//DependencyParentSetting->OnSettingChangedEvent.AddUObject(this, &ThisClass::HandleDependencySettingChanged);
-
 		DependencyParentSetting->OnDependencyParentSettingChangedEvent.AddUObject(
 			this, &ThisClass::HandleDependencyParentSettingChanged);
 	}
@@ -67,7 +152,7 @@ void UGameSetting::HandleDependencySettingChanged(UGameSetting* DependencySettin
 void UGameSetting::HandleDependencyParentSettingChanged(UGameSetting* DependencyParentSetting)
 {
 	// 依赖父项设置改变，重新设置可编辑
-	if (DependencyParentSetting == ParentSetting)
+	if (Condition && Condition->ParentSetting == DependencyParentSetting)
 	{
 		RefreshEditableState();
 	}
@@ -75,7 +160,12 @@ void UGameSetting::HandleDependencyParentSettingChanged(UGameSetting* Dependency
 
 void UGameSetting::RefreshEditableState()
 {
-	
+	if (Condition)
+	{
+		bool bMet = Condition->IfConditionMet();
+
+		Condition->ThenDo(bMet);
+	}
 }
 
 

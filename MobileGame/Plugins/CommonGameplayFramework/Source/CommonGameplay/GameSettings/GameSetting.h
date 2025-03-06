@@ -8,9 +8,11 @@
 #include "GameSetting.generated.h"
 
 
+class UGameSettingCondition;
 class UCommonSettingData;
 
 /** Why did the setting change? */
+UENUM(BlueprintType)
 enum class EGameSettingChangeReason : uint8
 {
 	Change,
@@ -65,8 +67,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::EnumValue"))
+	TArray<FText> EnumArray;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+		meta = (EditCondition = "SettingValueType == EGameSettingValueType::EnumValue"))
 	uint8 EnumValue = 0;
 };
+
 
 /*
  * 设置配置表
@@ -86,6 +93,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameSettingValue DefaultValue;
+
+	// 效果名字
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName ConditionKey = FName();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameSettingCondition> EditCondition;
 };
 
 
@@ -113,6 +127,8 @@ public:
 	DECLARE_EVENT_TwoParams(UGameSetting, FOnSettingChanged, UGameSetting* /*InSetting*/,
 	                        EGameSettingChangeReason /*InChangeReason*/);
 
+	//DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSettingChanged, EGameSettingChangeReason, ChangeReason);
+
 	DECLARE_EVENT_OneParam(UGameSetting, FOnSettingApplied, UGameSetting* /*InSetting*/);
 
 	DECLARE_EVENT_OneParam(UGameSetting, FOnDependencyParentSettingChanged, UGameSetting* /*InSetting*/);
@@ -128,16 +144,29 @@ public:
 	/**
 	* 获取此设置的非本地化开发人员名称。这应该保持不变，并代表此设置数据中此设置的唯一标识符。
 	*/
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	FName GetDevName() const { return DevName; }
 
 	void SetDevName(const FName& Value) { DevName = Value; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	FText GetDisplayName() const { return DisplayName; }
 
 	void SetDisplayName(const FText& Value) { DisplayName = Value; }
 
+
+	TSubclassOf<UGameSettingCondition> GetConditionClass() const { return DefaultConditionClass; }
+
+	void SetConditionClass(const TSubclassOf<UGameSettingCondition> Value) { DefaultConditionClass = Value; }
+
+	FName GetConditionKey() const { return ConditionKey; }
+
+	void SetConditionKey(const FName Value) { ConditionKey = Value; }
+
+	UFUNCTION(BlueprintPure)
+	EGameSettingValueType GetValueType() const { return DefaultSettingValue.SettingValueType; }
+
+	UFUNCTION(BlueprintCallable)
 	void SetDefaultValue(FGameSettingValue Value);
 	void SetDefaultValue_Bool(bool Value);
 	void SetDefaultValue_Float(float Value);
@@ -145,6 +174,37 @@ public:
 	void SetDefaultValue_Enum(int Value);
 	void SetDefaultValue_String(FString Value);
 	void SetDefaultValue_Key(FKey Value);
+
+
+	UFUNCTION(BlueprintPure)
+	FGameSettingValue GetCurrentValue() const;
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue(FGameSettingValue Value);
+	UFUNCTION(BlueprintPure)
+	bool GetCurrentValue_Bool();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_Bool(bool Value);
+	UFUNCTION(BlueprintPure)
+	float GetCurrentValue_Float();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_Float(float Value);
+	UFUNCTION(BlueprintPure)
+	int GetCurrentValue_Int();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_Int(int Value);
+	UFUNCTION(BlueprintPure)
+	int GetCurrentValue_Enum();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_Enum(int Value);
+	UFUNCTION(BlueprintPure)
+	FString GetCurrentValue_String();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_String(FString Value);
+	UFUNCTION(BlueprintPure)
+	FKey GetCurrentValue_Key();
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentValue_Key(FKey Value);
+
 
 	void SetSettingData(UCommonSettingData* InOwningSettingData) { OwningSettingData = InOwningSettingData; }
 
@@ -178,12 +238,12 @@ public:
 
 	void Apply();
 
+	UPROPERTY()
+	TObjectPtr<UGameSettingCondition> Condition;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<ULocalPlayer> LocalPlayer;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UGameSetting> ParentSetting;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UCommonSettingData> OwningSettingData;
@@ -197,6 +257,11 @@ private:
 	FText DescriptionRichText;
 	// 警告
 	FText WarningRichText;
+
+	FName ConditionKey;
+	TSubclassOf<UGameSettingCondition> DefaultConditionClass;
+
+	
 
 	// 当前值
 	FGameSettingValue GameSettingValue;

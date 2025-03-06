@@ -5,6 +5,12 @@
 
 UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULocalPlayer* InLocalPlayer)
 {
+	if (!InLocalPlayer)
+	{
+		return nullptr;
+	}
+
+	// 先从缓存中找
 	for (auto setting : LocalPlayerGameSettingDataList)
 	{
 		if (setting->OwningLocalPlayer == InLocalPlayer)
@@ -13,13 +19,15 @@ UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULoca
 		}
 	}
 
-	if (InLocalPlayer)
-	{
-		UCommonSettingData* NewSettingData = NewObject<UCommonSettingData>();
-		NewSettingData->Initialize(InLocalPlayer);
-		LocalPlayerGameSettingDataList.Add(NewSettingData);
-		return NewSettingData;
-	}
-	
-	return nullptr;
+
+	// 缓存中没有，创建一个
+	UCommonSettingData* NewSettingData = NewObject<UCommonSettingData>();
+	NewSettingData->Initialize(InLocalPlayer);
+	LocalPlayerGameSettingDataList.Add(NewSettingData);
+	return NewSettingData;
+}
+
+TArray<UGameSetting*> UCommonSettingSubsystem::GetLocalPlayerGameSetting(ULocalPlayer* InLocalPlayer)
+{
+	return GetLocalPlayerGameSettingData(InLocalPlayer)->Settings;
 }
