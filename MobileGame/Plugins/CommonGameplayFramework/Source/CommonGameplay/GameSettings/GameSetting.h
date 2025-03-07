@@ -8,6 +8,7 @@
 #include "GameSetting.generated.h"
 
 
+class UGameSetting;
 class UGameSettingCondition;
 class UCommonSettingData;
 
@@ -116,7 +117,7 @@ public:
 	FName ConditionKey = FName();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<UGameSettingCondition> EditCondition;
+	TSubclassOf<UGameSetting> SettingClass = nullptr;
 };
 
 
@@ -128,7 +129,7 @@ public:
  * 3.支持事件回调 允许外部监听设置的更改，并在必要时做出响应。
  * 4.支持搜索与分析 提供可搜索文本及分析数据上报功能。
  */
-UCLASS(BlueprintType)
+UCLASS(BlueprintType, Abstract, Blueprintable)
 class COMMONGAMEPLAY_API UGameSetting : public UObject
 {
 	GENERATED_BODY()
@@ -172,9 +173,9 @@ public:
 	void SetDisplayName(const FText& Value) { DisplayName = Value; }
 
 
-	TSubclassOf<UGameSettingCondition> GetConditionClass() const { return DefaultConditionClass; }
+	/*TSubclassOf<UGameSettingCondition> GetConditionClass() const { return DefaultConditionClass; }
 
-	void SetConditionClass(const TSubclassOf<UGameSettingCondition> Value) { DefaultConditionClass = Value; }
+	void SetConditionClass(const TSubclassOf<UGameSettingCondition> Value) { DefaultConditionClass = Value; }*/
 
 	FName GetConditionKey() const { return ConditionKey; }
 
@@ -245,6 +246,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Initialize(ULocalPlayer* InLocalPlayer);
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	bool IfConditionMet();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ThenConditionDo(bool bMet);
+
 	/**
     * 刷新可编辑状态，如何不可编辑就要设置为默认值
     */
@@ -278,8 +286,8 @@ public:
 
 	void Apply();
 
-	UPROPERTY()
-	TObjectPtr<UGameSettingCondition> Condition;
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UGameSetting> ParentSetting;
 
 private:
 	UPROPERTY(Transient)
@@ -300,7 +308,7 @@ private:
 
 	// 条件
 	FName ConditionKey;
-	TSubclassOf<UGameSettingCondition> DefaultConditionClass;
+	//TSubclassOf<UGameSettingCondition> DefaultConditionClass;
 
 
 	// 当前值

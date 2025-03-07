@@ -2,8 +2,6 @@
 
 
 #include "CommonSettingData.h"
-
-#include "GameSettingCondition.h"
 #include "CommonGameplay/Development/CommonDevelopSettings.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "CommonGameplay/System/CommonLogChannels.h"
@@ -26,32 +24,39 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 	// 先创建基本设置
 	for (const FCommonSettingCfgData& GameSettingData : GameSettingDataList)
 	{
-		// TODO 这里可以放到 Initialize
-		UGameSetting* Setting = NewObject<UGameSetting>();
+		
+
+		if (GameSettingData.SettingClass == nullptr)
+		{
+			continue;
+		}
+		// TODO 这里可以放到 蓝图中设置
+		UGameSetting* Setting = NewObject<UGameSetting>(this, GameSettingData.SettingClass);
 		Setting->SetDevName(GameSettingData.DevName);
 		Setting->SetDisplayName(GameSettingData.DisplayName);
 		Setting->SetDefaultValue(GameSettingData.DefaultValue);
+
+		// TODO 这里比如图像设置等要从 UCommonLocalSettings 中读取
 		Setting->SetCurrentValue(GameSettingData.DefaultValue);
+
 		Setting->SetConditionKey(GameSettingData.ConditionKey);
-		Setting->SetConditionClass(GameSettingData.EditCondition);
+		//Setting->SetConditionClass(GameSettingData.ConditionClass);
+
 		Settings.Add(Setting);
 	}
 
 	// 添加互相之间的依赖条件
 	for (UGameSetting* Setting : Settings)
 	{
-		TSubclassOf<UGameSettingCondition> CurClass = Setting->GetConditionClass();
-
-		UGameSetting* ParentSetting = FindGameSettingByKey(Setting->GetConditionKey());
+		//TSubclassOf<UGameSettingCondition> CurClass = Setting->GetConditionClass();
+		UGameSetting* ParentS = FindGameSettingByKey(Setting->GetConditionKey());
 
 		// 如果有条件那就绑定
-		if (CurClass && ParentSetting)
+		if (ParentS)
 		{
-			UGameSettingCondition* NewCondition = NewObject<UGameSettingCondition>(this, CurClass);
-			NewCondition->ParentSetting = ParentSetting;
-			NewCondition->SelfSetting = Setting;
-			Setting->Condition = NewCondition;
-			Setting->AddDependencyParentSetting(ParentSetting);
+			//UGameSettingCondition* NewCondition = NewObject<UGameSettingCondition>(this, CurClass);
+
+			Setting->AddDependencyParentSetting(ParentS);
 		}
 	}
 }
@@ -62,7 +67,7 @@ void UCommonSettingData::SaveAndApplyChanges()
 	{
 		// Game user settings need to be applied to handle things like resolution, this saves indirectly
 		LocalCommonPlayer->GetLocalSettings()->ApplySettings(false);
-		
+
 		LocalCommonPlayer->GetSharedSettings()->ApplySettings();
 		LocalCommonPlayer->GetSharedSettings()->SaveSettings();
 	}

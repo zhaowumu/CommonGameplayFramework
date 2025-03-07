@@ -3,7 +3,6 @@
 
 #include "GameSetting.h"
 
-#include "GameSettingCondition.h"
 
 UWorld* UGameSetting::GetWorld() const
 {
@@ -133,6 +132,7 @@ void UGameSetting::AddDependencyParentSetting(UGameSetting* DependencyParentSett
 {
 	if (ensure(DependencyParentSetting))
 	{
+		ParentSetting = DependencyParentSetting;
 		DependencyParentSetting->OnDependencyParentSettingChangedEvent.AddUObject(
 			this, &ThisClass::HandleDependencyParentSettingChanged);
 	}
@@ -141,7 +141,7 @@ void UGameSetting::AddDependencyParentSetting(UGameSetting* DependencyParentSett
 void UGameSetting::HandleDependencyParentSettingChanged(UGameSetting* DependencyParentSetting)
 {
 	// 依赖父项设置改变，重新设置可编辑
-	if (Condition && Condition->ParentSetting == DependencyParentSetting)
+	if (ParentSetting == DependencyParentSetting)
 	{
 		RefreshEditableState();
 	}
@@ -149,11 +149,11 @@ void UGameSetting::HandleDependencyParentSettingChanged(UGameSetting* Dependency
 
 void UGameSetting::RefreshEditableState()
 {
-	if (Condition)
+	if (ParentSetting)
 	{
-		bool bMet = Condition->IfConditionMet();
+		bool bMet = IfConditionMet();
 
-		Condition->ThenDo(bMet);
+		ThenConditionDo(bMet);
 	}
 }
 
