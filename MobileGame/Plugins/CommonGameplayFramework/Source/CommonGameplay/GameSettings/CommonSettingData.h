@@ -20,6 +20,8 @@ public:
 
 	void Initialize(ULocalPlayer* InLocalPlayer);
 
+	virtual void SaveAndApplyChanges();
+
 
 	UFUNCTION(BlueprintPure)
 	UGameSetting* FindGameSettingByKey(const FName& Key);

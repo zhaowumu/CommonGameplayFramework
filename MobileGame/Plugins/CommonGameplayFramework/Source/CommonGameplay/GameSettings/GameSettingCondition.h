@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS(EditInlineNew, Blueprintable,Abstract)
+UCLASS(Blueprintable,Abstract)
 class COMMONGAMEPLAY_API UGameSettingCondition : public UObject
 {
 	GENERATED_BODY()

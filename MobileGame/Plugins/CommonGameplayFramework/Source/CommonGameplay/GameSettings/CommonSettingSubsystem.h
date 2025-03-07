@@ -22,8 +22,12 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	TArray<UGameSetting*> GetLocalPlayerGameSetting(ULocalPlayer* InLocalPlayer);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveAndApplyGameSetting(ULocalPlayer* InLocalPlayer);
 private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<UCommonSettingData>> LocalPlayerGameSettingDataList;
 };
+

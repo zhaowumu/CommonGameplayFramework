@@ -19,7 +19,8 @@ UCommonLocalPlayer::UCommonLocalPlayer()
 {
 }
 
-FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate)
+FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerControllerSet(
+	FPlayerControllerSetDelegate::FDelegate Delegate)
 {
 	APlayerController* PC = GetPlayerController(GetWorld());
 
@@ -40,7 +41,7 @@ FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerStateSet(FPlayerStat
 	{
 		Delegate.Execute(this, PlayerState);
 	}
-	
+
 	return OnPlayerStateSet.Add(Delegate);
 }
 
@@ -57,7 +58,18 @@ FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerPawnSet(FPlayerPawnS
 	return OnPlayerPawnSet.Add(Delegate);
 }
 
-bool UCommonLocalPlayer::GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData, int32 StereoViewIndex) const
+UCommonLocalSettings* UCommonLocalPlayer::GetLocalSettings() const
+{
+	return UCommonLocalSettings::Get();
+}
+
+UCommonSharedSettings* UCommonLocalPlayer::GetSharedSettings() const
+{
+	return nullptr;
+}
+
+bool UCommonLocalPlayer::GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
+                                           int32 StereoViewIndex) const
 {
 	if (!bIsPlayerViewEnabled)
 	{

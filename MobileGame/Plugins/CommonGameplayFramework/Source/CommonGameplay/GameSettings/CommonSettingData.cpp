@@ -5,6 +5,7 @@
 
 #include "GameSettingCondition.h"
 #include "CommonGameplay/Development/CommonDevelopSettings.h"
+#include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "CommonGameplay/System/CommonLogChannels.h"
 
 
@@ -30,6 +31,7 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 		Setting->SetDevName(GameSettingData.DevName);
 		Setting->SetDisplayName(GameSettingData.DisplayName);
 		Setting->SetDefaultValue(GameSettingData.DefaultValue);
+		Setting->SetCurrentValue(GameSettingData.DefaultValue);
 		Setting->SetConditionKey(GameSettingData.ConditionKey);
 		Setting->SetConditionClass(GameSettingData.EditCondition);
 		Settings.Add(Setting);
@@ -51,6 +53,18 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 			Setting->Condition = NewCondition;
 			Setting->AddDependencyParentSetting(ParentSetting);
 		}
+	}
+}
+
+void UCommonSettingData::SaveAndApplyChanges()
+{
+	if (UCommonLocalPlayer* LocalCommonPlayer = Cast<UCommonLocalPlayer>(OwningLocalPlayer))
+	{
+		// Game user settings need to be applied to handle things like resolution, this saves indirectly
+		LocalCommonPlayer->GetLocalSettings()->ApplySettings(false);
+		
+		LocalCommonPlayer->GetSharedSettings()->ApplySettings();
+		LocalCommonPlayer->GetSharedSettings()->SaveSettings();
 	}
 }
 

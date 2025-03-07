@@ -21,7 +21,7 @@ UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULoca
 
 
 	// 缓存中没有，创建一个
-	UCommonSettingData* NewSettingData = NewObject<UCommonSettingData>();
+	UCommonSettingData* NewSettingData = NewObject<UCommonSettingData>(this);
 	NewSettingData->Initialize(InLocalPlayer);
 	LocalPlayerGameSettingDataList.Add(NewSettingData);
 	return NewSettingData;
@@ -30,4 +30,9 @@ UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULoca
 TArray<UGameSetting*> UCommonSettingSubsystem::GetLocalPlayerGameSetting(ULocalPlayer* InLocalPlayer)
 {
 	return GetLocalPlayerGameSettingData(InLocalPlayer)->Settings;
+}
+
+void UCommonSettingSubsystem::SaveAndApplyGameSetting(ULocalPlayer* InLocalPlayer)
+{
+	GetLocalPlayerGameSettingData(InLocalPlayer)->SaveAndApplyChanges();
 }

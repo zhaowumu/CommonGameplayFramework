@@ -43,38 +43,54 @@ struct FGameSettingValue
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	EGameSettingValueType SettingValueType = EGameSettingValueType::BoolValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	EGameSettingValueType SettingValueType = EGameSettingValueType::None;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::BoolValue"))
 	bool BoolValue = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::FloatValue"))
 	float FloatValue = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::IntValue"))
 	int32 IntValue = 0;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::StringValue"))
 	FString StringValue = FString();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::KeyValue"))
 	FKey KeyValue = FKey();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::EnumValue"))
 	TArray<FText> EnumArray;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,
 		meta = (EditCondition = "SettingValueType == EGameSettingValueType::EnumValue"))
 	uint8 EnumValue = 0;
 };
 
+/*
+ * 设置配置表
+ */
+USTRUCT(BlueprintType)
+struct FCommonTestStructure
+{
+	GENERATED_BODY()
+
+public:
+	// 效果名字
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FName DevName = FName();
+	// 显示名字
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DisplayName = FText::GetEmpty();
+};
 
 /*
  * 设置配置表
@@ -86,20 +102,20 @@ struct FCommonSettingCfgData : public FTableRowBase
 
 public:
 	// 效果名字
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FName DevName = FName();
 	// 显示名字
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FText DisplayName = FText::GetEmpty();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FGameSettingValue DefaultValue;
 
 	// 效果名字
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FName ConditionKey = FName();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<UGameSettingCondition> EditCondition;
 };
 
@@ -225,7 +241,6 @@ public:
 	/** Notify that the setting changed */
 	void NotifySettingChanged(EGameSettingChangeReason Reason);
 
-	
 
 	UFUNCTION(BlueprintCallable)
 	void Initialize(ULocalPlayer* InLocalPlayer);
@@ -236,13 +251,14 @@ public:
 	virtual void RefreshEditableState();
 
 
-	/*
 	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Enable, bool, bEnable);
+
 	FOnCondition_Enable OnCondition_EnableDelegate;
 
 	UFUNCTION(BlueprintCallable)
 	void SetSettingEnable(bool bEnable);
 
+	/*
 	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Show, bool, bShow);
 	FOnCondition_Show OnCondition_ShowDelegate;
 
@@ -250,14 +266,15 @@ public:
 	void SetSettingShow(bool bShow);*/
 
 	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_ChangeValue, FGameSettingValue, NewValue);
+
 	FOnCondition_ChangeValue OnCondition_ChangeValueDelegate;
 
-	// todo 可以把前两个也并入到这个里面
+	// 被动的因为条件改值
 	UFUNCTION(BlueprintCallable)
 	void SetSettingChangeValue(FGameSettingValue NewValue);
 
 	UFUNCTION(BlueprintCallable)
-	void BindAndInitialize(const FOnCondition_ChangeValue& FuncChangeValue);
+	void BindAndInitialize(const FOnCondition_Enable& FuncEnable, const FOnCondition_ChangeValue& FuncChangeValue);
 
 	void Apply();
 
@@ -285,7 +302,6 @@ private:
 	FName ConditionKey;
 	TSubclassOf<UGameSettingCondition> DefaultConditionClass;
 
-	
 
 	// 当前值
 	FGameSettingValue GameSettingValue;

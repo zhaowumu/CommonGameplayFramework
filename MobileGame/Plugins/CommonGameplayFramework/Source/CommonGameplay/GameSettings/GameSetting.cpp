@@ -157,7 +157,8 @@ void UGameSetting::RefreshEditableState()
 	}
 }
 
-/*void UGameSetting::SetSettingEnable(bool bEnable)
+
+void UGameSetting::SetSettingEnable(bool bEnable)
 {
 	if (OnCondition_EnableDelegate.IsBound())
 	{
@@ -165,6 +166,7 @@ void UGameSetting::RefreshEditableState()
 	}
 }
 
+/*
 void UGameSetting::SetSettingShow(bool bShow)
 {
 	if (OnCondition_ShowDelegate.IsBound())
@@ -181,8 +183,10 @@ void UGameSetting::SetSettingChangeValue(FGameSettingValue NewValue)
 	}
 }
 
-void UGameSetting::BindAndInitialize(const FOnCondition_ChangeValue& FuncChangeValue)
+void UGameSetting::BindAndInitialize(const FOnCondition_Enable& FuncEnable,
+                                     const FOnCondition_ChangeValue& FuncChangeValue)
 {
+	OnCondition_EnableDelegate = FuncEnable;
 	OnCondition_ChangeValueDelegate = FuncChangeValue;
 	RefreshEditableState();
 }
