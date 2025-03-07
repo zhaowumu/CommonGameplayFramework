@@ -25,6 +25,7 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 	// 先创建基本设置
 	for (const FCommonSettingCfgData& GameSettingData : GameSettingDataList)
 	{
+		// TODO 这里可以放到 Initialize
 		UGameSetting* Setting = NewObject<UGameSetting>();
 		Setting->SetDevName(GameSettingData.DevName);
 		Setting->SetDisplayName(GameSettingData.DisplayName);
@@ -35,21 +36,19 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 	}
 
 	// 添加互相之间的依赖条件
-
 	for (UGameSetting* Setting : Settings)
 	{
 		TSubclassOf<UGameSettingCondition> CurClass = Setting->GetConditionClass();
 
 		UGameSetting* ParentSetting = FindGameSettingByKey(Setting->GetConditionKey());
 
-		// 如果有条件
+		// 如果有条件那就绑定
 		if (CurClass && ParentSetting)
 		{
 			UGameSettingCondition* NewCondition = NewObject<UGameSettingCondition>(this, CurClass);
 			NewCondition->ParentSetting = ParentSetting;
 			NewCondition->SelfSetting = Setting;
 			Setting->Condition = NewCondition;
-			
 			Setting->AddDependencyParentSetting(ParentSetting);
 		}
 	}

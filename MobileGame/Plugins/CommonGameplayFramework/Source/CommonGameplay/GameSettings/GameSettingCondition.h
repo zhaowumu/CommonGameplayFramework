@@ -19,7 +19,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UGameSetting> SelfSetting;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UGameSetting> ParentSetting;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -27,9 +27,4 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ThenDo(bool bConditionMet) const;
-
-
-
-	UFUNCTION(BlueprintCallable)
-	void SetSettingShow(bool bShow);
 };

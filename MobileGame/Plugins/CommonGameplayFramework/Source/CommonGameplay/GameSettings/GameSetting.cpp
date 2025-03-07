@@ -157,9 +157,34 @@ void UGameSetting::RefreshEditableState()
 	}
 }
 
-void UGameSetting::SetSettingEnable(bool bEnable)
+/*void UGameSetting::SetSettingEnable(bool bEnable)
 {
-	OnCondition_EnableDelegate.Broadcast(bEnable);
+	if (OnCondition_EnableDelegate.IsBound())
+	{
+		OnCondition_EnableDelegate.Execute(bEnable);
+	}
+}
+
+void UGameSetting::SetSettingShow(bool bShow)
+{
+	if (OnCondition_ShowDelegate.IsBound())
+	{
+		OnCondition_ShowDelegate.Execute(bShow);
+	}
+}*/
+
+void UGameSetting::SetSettingChangeValue(FGameSettingValue NewValue)
+{
+	if (OnCondition_ChangeValueDelegate.IsBound())
+	{
+		OnCondition_ChangeValueDelegate.Execute(NewValue);
+	}
+}
+
+void UGameSetting::BindAndInitialize(const FOnCondition_ChangeValue& FuncChangeValue)
+{
+	OnCondition_ChangeValueDelegate = FuncChangeValue;
+	RefreshEditableState();
 }
 
 
@@ -170,10 +195,10 @@ void UGameSetting::NotifySettingChanged(EGameSettingChangeReason Reason)
 }
 
 
-
 void UGameSetting::Initialize(ULocalPlayer* InLocalPlayer)
 {
 }
+
 
 void UGameSetting::Apply()
 {

@@ -25,6 +25,7 @@ enum class EGameSettingChangeReason : uint8
 UENUM(BlueprintType)
 enum class EGameSettingValueType : uint8
 {
+	None,
 	BoolValue,
 	FloatValue,
 	IntValue,
@@ -226,6 +227,7 @@ public:
 
 	
 
+	UFUNCTION(BlueprintCallable)
 	void Initialize(ULocalPlayer* InLocalPlayer);
 
 	/**
@@ -234,8 +236,8 @@ public:
 	virtual void RefreshEditableState();
 
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCondition_Enable, bool, bEnable);
-	UPROPERTY(BlueprintAssignable)
+	/*
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Enable, bool, bEnable);
 	FOnCondition_Enable OnCondition_EnableDelegate;
 
 	UFUNCTION(BlueprintCallable)
@@ -243,6 +245,19 @@ public:
 
 	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Show, bool, bShow);
 	FOnCondition_Show OnCondition_ShowDelegate;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSettingShow(bool bShow);*/
+
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_ChangeValue, FGameSettingValue, NewValue);
+	FOnCondition_ChangeValue OnCondition_ChangeValueDelegate;
+
+	// todo 可以把前两个也并入到这个里面
+	UFUNCTION(BlueprintCallable)
+	void SetSettingChangeValue(FGameSettingValue NewValue);
+
+	UFUNCTION(BlueprintCallable)
+	void BindAndInitialize(const FOnCondition_ChangeValue& FuncChangeValue);
 
 	void Apply();
 
@@ -266,6 +281,7 @@ private:
 	// 警告
 	FText WarningRichText;
 
+	// 条件
 	FName ConditionKey;
 	TSubclassOf<UGameSettingCondition> DefaultConditionClass;
 
