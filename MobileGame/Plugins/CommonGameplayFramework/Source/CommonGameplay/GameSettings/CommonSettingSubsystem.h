@@ -25,6 +25,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SaveAndApplyGameSetting(ULocalPlayer* InLocalPlayer);
+
 private:
 
 	UPROPERTY()

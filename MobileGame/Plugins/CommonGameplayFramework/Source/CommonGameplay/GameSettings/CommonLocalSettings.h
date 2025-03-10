@@ -34,34 +34,39 @@ public:
 	//~End of UGameUserSettings interface
 
 
-#pragma region Audio - Sound
+#pragma region Audio
 
 public:
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetOverallVolume() const;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetOverallVolume(float InVolume);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetMusicVolume() const;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetMusicVolume(float InVolume);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetSoundFXVolume() const;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetSoundFXVolume(float InVolume);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetDialogueVolume() const;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetDialogueVolume(float InVolume);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	float GetVoiceChatVolume() const;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetVoiceChatVolume(float InVolume);
+
+	UFUNCTION(BlueprintPure)
+	float GetUIVolume() const;
+	UFUNCTION(BlueprintCallable)
+	void SetUIVolume(float InVolume);
 
 private:
 	UPROPERTY(Config)
@@ -74,20 +79,8 @@ private:
 	float DialogueVolume = 1.0f;
 	UPROPERTY(Config)
 	float VoiceChatVolume = 1.0f;
-
-	UPROPERTY(Transient)
-	TMap<FName/*SoundClassName*/, TObjectPtr<USoundControlBus>> ControlBusMap;
-	
-	UPROPERTY(Transient)
-	TObjectPtr<USoundControlBusMix> ControlBusMix = nullptr;
-	
-	UPROPERTY(Transient)
-	bool bSoundControlBusMixLoaded;
-	
-	void LoadUserControlBusMix();
-	
-	void SetVolumeForControlBus(USoundControlBus* InSoundControlBus, float InVolume);
-
+	UPROPERTY(Config)
+	float UIVolume = 1.0f;
 
 #pragma endregion
 
@@ -107,4 +100,6 @@ private:
 
 #pragma endregion
 };
+
+
 

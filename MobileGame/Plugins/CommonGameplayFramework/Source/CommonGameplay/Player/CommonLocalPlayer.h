@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "CommonGameplay/GameSettings/CommonLocalSettings.h"
-#include "CommonGameplay/GameSettings/CommonSharedSettings.h"
 #include "Engine/LocalPlayer.h"
-
 #include "CommonLocalPlayer.generated.h"
 
+class UCommonLocalSettings;
+class UCommonSharedSettings;
 class APawn;
 class APlayerController;
 class APlayerState;
@@ -41,12 +40,13 @@ public:
 	FDelegateHandle CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate);
 
 	/** Gets the local settings for this player, this is read from config files at process startup and is always valid */
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	UCommonLocalSettings* GetLocalSettings() const;
 
 	/** Gets the shared setting for this player, this is read using the save game system so may not be correct until after user login */
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	UCommonSharedSettings* GetSharedSettings() const;
+	
 
 public:
 	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData, int32 StereoViewIndex) const override;
@@ -58,4 +58,7 @@ public:
 
 private:
 	bool bIsPlayerViewEnabled = true;
+
+	UPROPERTY(Transient)
+	mutable TObjectPtr<UCommonSharedSettings> SharedSettings;
 };

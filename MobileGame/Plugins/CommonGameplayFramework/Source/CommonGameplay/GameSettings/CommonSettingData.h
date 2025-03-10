@@ -18,9 +18,10 @@ class COMMONGAMEPLAY_API UCommonSettingData : public UObject
 public:
 	UCommonSettingData();
 
-	void Initialize(ULocalPlayer* InLocalPlayer);
+	void Initialize(UCommonLocalPlayer* InLocalPlayer);
 
-	virtual void SaveAndApplyChanges();
+	UFUNCTION(BlueprintCallable)
+	void SaveAndApplyChanges();
 
 
 	UFUNCTION(BlueprintPure)
@@ -29,7 +30,7 @@ public:
 
 
 	UPROPERTY(Transient)
-	TObjectPtr<ULocalPlayer> OwningLocalPlayer;
+	TObjectPtr<UCommonLocalPlayer> OwningLocalPlayer;
 
 	/** The settings owned by this collection. */
 	UPROPERTY()

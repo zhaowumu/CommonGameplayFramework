@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "UObject/Object.h"
 #include "Engine/LocalPlayer.h"
 #include "GameSetting.generated.h"
@@ -158,6 +159,8 @@ public:
 	// GameSetting父项设置修改
 	FOnDependencyParentSettingChanged OnDependencyParentSettingChangedEvent;
 
+	
+
 public:
 	/**
 	* 获取此设置的非本地化开发人员名称。这应该保持不变，并代表此设置数据中此设置的唯一标识符。
@@ -244,8 +247,17 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void Initialize(ULocalPlayer* InLocalPlayer);
+	void Initialize(UCommonLocalPlayer* InLocalPlayer);
 
+	UFUNCTION(BlueprintPure)
+	UCommonLocalPlayer* GetOwningLocalPlayer() const { return LocalPlayer; }
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetRealValue(FGameSettingValue value);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	FGameSettingValue GetRealValue();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool IfConditionMet();
@@ -291,7 +303,7 @@ public:
 
 private:
 	UPROPERTY(Transient)
-	TObjectPtr<ULocalPlayer> LocalPlayer;
+	TObjectPtr<UCommonLocalPlayer> LocalPlayer;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UCommonSettingData> OwningSettingData;

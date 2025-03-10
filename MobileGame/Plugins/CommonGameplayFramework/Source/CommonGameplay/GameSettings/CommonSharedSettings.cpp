@@ -1,9 +1,32 @@
 ﻿#include "CommonSharedSettings.h"
-
 #include "Internationalization/Culture.h"
 
 UCommonSharedSettings::UCommonSharedSettings()
 {
+}
+
+UCommonSharedSettings* UCommonSharedSettings::LoadOrCreateSettings(const UCommonLocalPlayer* LocalPlayer)
+{
+	// This will stall the main thread while it loads
+	UCommonSharedSettings* SharedSettings = Cast<UCommonSharedSettings>(
+		LoadOrCreateSaveGameForLocalPlayer(UCommonSharedSettings::StaticClass(), LocalPlayer,
+		                                   TEXT("SharedGameSettings")));
+
+	SharedSettings->ApplySettings();
+
+	return SharedSettings;
+}
+
+UCommonSharedSettings* UCommonSharedSettings::CreateTemporarySettings(const UCommonLocalPlayer* LocalPlayer)
+{
+	// This is not loaded from disk but should be set up to save
+	UCommonSharedSettings* SharedSettings = Cast<UCommonSharedSettings>(
+		CreateNewSaveGameForLocalPlayer(UCommonSharedSettings::StaticClass(), LocalPlayer,
+		                                TEXT("SharedGameSettings")));
+
+	SharedSettings->ApplySettings();
+
+	return SharedSettings;
 }
 
 void UCommonSharedSettings::SaveSettings()

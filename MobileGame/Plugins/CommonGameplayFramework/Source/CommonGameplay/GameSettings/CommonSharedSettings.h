@@ -1,6 +1,7 @@
 ﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "GameFramework/SaveGame.h"
 #include "CommonSharedSettings.generated.h"
 
@@ -19,6 +20,16 @@ public:
 	bool IsDirty() const { return bIsDirty; }
 	void ClearDirtyFlag() { bIsDirty = false; }
 
+	/** Synchronously loads a settings object, this is not valid to call before login
+	* 同步加载设置对象，登录前调用此对象无效
+	*/
+	static UCommonSharedSettings* LoadOrCreateSettings(const UCommonLocalPlayer* LocalPlayer);
+
+	/** Creates a temporary settings object, this will be replaced by one loaded from the user's save game
+	* 创建一个临时设置对象，该对象将被从用户的保存游戏中加载的对象所替换
+	*/
+	static UCommonSharedSettings* CreateTemporarySettings(const UCommonLocalPlayer* LocalPlayer);
+
 	/** 
 	 * 将设置保存到磁盘
 	 */
@@ -28,6 +39,7 @@ public:
 	 * 将设置应用于当前玩家
 	 */
 	virtual void ApplySettings();
+
 private:
 	bool bIsDirty = false;
 
@@ -50,10 +62,9 @@ public:
 
 	void ResetToDefaultCulture();
 	bool ShouldResetToDefaultCulture() const { return bResetToDefaultCulture; }
-	
+
 	void ApplyCultureSettings();
 	void ResetCultureToCurrentSettings();
-
 
 private:
 	/** The pending culture to apply */
@@ -65,4 +76,3 @@ private:
 
 #pragma endregion
 };
-

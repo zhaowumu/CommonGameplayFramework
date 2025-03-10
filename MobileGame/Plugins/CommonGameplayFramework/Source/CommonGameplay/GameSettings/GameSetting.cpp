@@ -194,13 +194,17 @@ void UGameSetting::BindAndInitialize(const FOnCondition_Enable& FuncEnable,
 
 void UGameSetting::NotifySettingChanged(EGameSettingChangeReason Reason)
 {
+	SetRealValue(GameSettingValue);
 	OnSettingChangedEvent.Broadcast(this, Reason);
 	OnDependencyParentSettingChangedEvent.Broadcast(this);
 }
 
 
-void UGameSetting::Initialize(ULocalPlayer* InLocalPlayer)
+void UGameSetting::Initialize(UCommonLocalPlayer* InLocalPlayer)
 {
+	LocalPlayer = InLocalPlayer;
+	
+	SetCurrentValue(GetRealValue());
 }
 
 

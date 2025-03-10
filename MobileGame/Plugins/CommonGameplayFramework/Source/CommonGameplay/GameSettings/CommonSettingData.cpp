@@ -2,6 +2,9 @@
 
 
 #include "CommonSettingData.h"
+
+#include "CommonLocalSettings.h"
+#include "CommonSharedSettings.h"
 #include "CommonGameplay/Development/CommonDevelopSettings.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "CommonGameplay/System/CommonLogChannels.h"
@@ -12,7 +15,7 @@ UCommonSettingData::UCommonSettingData()
 }
 
 
-void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
+void UCommonSettingData::Initialize(UCommonLocalPlayer* InLocalPlayer)
 {
 	OwningLocalPlayer = InLocalPlayer;
 
@@ -24,20 +27,18 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 	// 先创建基本设置
 	for (const FCommonSettingCfgData& GameSettingData : GameSettingDataList)
 	{
-		
-
 		if (GameSettingData.SettingClass == nullptr)
 		{
 			continue;
 		}
 		// TODO 这里可以放到 蓝图中设置
 		UGameSetting* Setting = NewObject<UGameSetting>(this, GameSettingData.SettingClass);
+
+
 		Setting->SetDevName(GameSettingData.DevName);
 		Setting->SetDisplayName(GameSettingData.DisplayName);
 		Setting->SetDefaultValue(GameSettingData.DefaultValue);
 
-		// TODO 这里比如图像设置等要从 UCommonLocalSettings 中读取
-		Setting->SetCurrentValue(GameSettingData.DefaultValue);
 
 		Setting->SetConditionKey(GameSettingData.ConditionKey);
 		//Setting->SetConditionClass(GameSettingData.ConditionClass);
@@ -58,6 +59,10 @@ void UCommonSettingData::Initialize(ULocalPlayer* InLocalPlayer)
 
 			Setting->AddDependencyParentSetting(ParentS);
 		}
+
+		Setting->Initialize(OwningLocalPlayer);
+
+
 	}
 }
 

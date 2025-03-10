@@ -3,6 +3,7 @@
 
 #include "CommonSettingSubsystem.h"
 
+
 UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULocalPlayer* InLocalPlayer)
 {
 	if (!InLocalPlayer)
@@ -22,7 +23,7 @@ UCommonSettingData* UCommonSettingSubsystem::GetLocalPlayerGameSettingData(ULoca
 
 	// 缓存中没有，创建一个
 	UCommonSettingData* NewSettingData = NewObject<UCommonSettingData>(this);
-	NewSettingData->Initialize(InLocalPlayer);
+	NewSettingData->Initialize(Cast<UCommonLocalPlayer>(InLocalPlayer));
 	LocalPlayerGameSettingDataList.Add(NewSettingData);
 	return NewSettingData;
 }
