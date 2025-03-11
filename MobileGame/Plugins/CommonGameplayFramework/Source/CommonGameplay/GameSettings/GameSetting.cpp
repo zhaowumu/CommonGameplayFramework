@@ -166,15 +166,6 @@ void UGameSetting::SetSettingEnable(bool bEnable)
 	}
 }
 
-/*
-void UGameSetting::SetSettingShow(bool bShow)
-{
-	if (OnCondition_ShowDelegate.IsBound())
-	{
-		OnCondition_ShowDelegate.Execute(bShow);
-	}
-}*/
-
 void UGameSetting::SetSettingChangeValue(FGameSettingValue NewValue)
 {
 	if (OnCondition_ChangeValueDelegate.IsBound())

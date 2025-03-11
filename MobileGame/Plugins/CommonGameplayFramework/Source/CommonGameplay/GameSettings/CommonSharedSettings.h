@@ -8,6 +8,8 @@
 /*
  * UCommonSharedSettings-“共享”设置作为USaveGame系统的一部分存储，这些设置不像本地设置那样是特定于<机器>的，可以安全地存储在云中并“共享”它们。
  * 使用保存游戏系统，我们还可以存储每个玩家的设置，所以控制器键绑定偏好等应该放在这里，因为如果这些存储在本地设置中，所有用户都会得到它们。
+ * Saved\SaveGames\EnhancedInputUserSettings.sav
+ * Saved\SaveGames\CommonSharedSettings.sav
  */
 UCLASS()
 class COMMONGAMEPLAY_API UCommonSharedSettings : public ULocalPlayerSaveGame
@@ -16,6 +18,10 @@ class COMMONGAMEPLAY_API UCommonSharedSettings : public ULocalPlayerSaveGame
 
 public:
 	UCommonSharedSettings();
+
+	//~ULocalPlayerSaveGame interface
+	int32 GetLatestDataVersion() const override;
+	//~End of ULocalPlayerSaveGame interface
 
 	bool IsDirty() const { return bIsDirty; }
 	void ClearDirtyFlag() { bIsDirty = false; }
@@ -29,6 +35,12 @@ public:
 	* 创建一个临时设置对象，该对象将被从用户的保存游戏中加载的对象所替换
 	*/
 	static UCommonSharedSettings* CreateTemporarySettings(const UCommonLocalPlayer* LocalPlayer);
+
+	DECLARE_DELEGATE_OneParam(FOnSettingsLoadedEvent, UCommonSharedSettings* Settings);
+	/** Starts an async load of the settings object, calls Delegate on completion
+	 * 启动设置对象的异步加载，完成后调用Delegate
+	 */
+	static bool AsyncLoadOrCreateSettings(const UCommonLocalPlayer* LocalPlayer, FOnSettingsLoadedEvent Delegate);
 
 	/** 
 	 * 将设置保存到磁盘
@@ -75,4 +87,20 @@ private:
 	bool bResetToDefaultCulture = false;
 
 #pragma endregion
+
+#pragma region 后台音乐设置
+
+	UFUNCTION()
+	bool GetAllowAudioInBackgroundSetting() const { return bBackgroundAudioEnabled; }
+	UFUNCTION()
+	void SetAllowAudioInBackgroundSetting(bool NewValue);
+	
+	// 后台运行时音乐设置
+	void ApplyBackgroundAudioSettings();
+
+private:
+	bool bBackgroundAudioEnabled = true;
+
+#pragma endregion
+	
 };

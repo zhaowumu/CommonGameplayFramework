@@ -1,16 +1,28 @@
 ﻿#include "CommonSharedSettings.h"
 #include "Internationalization/Culture.h"
+#include "EnhancedInputSubsystems.h"
+#include "UserSettings/EnhancedInputUserSettings.h"
 
 UCommonSharedSettings::UCommonSharedSettings()
 {
+	FInternationalization::Get().OnCultureChanged().AddUObject(this, &ThisClass::OnCultureChanged);
 }
+
+int32 UCommonSharedSettings::GetLatestDataVersion() const
+{
+	// 0 = before subclassing ULocalPlayerSaveGame
+	// 1 = first proper version
+	return 1;
+}
+
+static FString SHARED_SETTINGS_SLOT_NAME = TEXT("SharedGameSettings");
 
 UCommonSharedSettings* UCommonSharedSettings::LoadOrCreateSettings(const UCommonLocalPlayer* LocalPlayer)
 {
-	// This will stall the main thread while it loads
+	// 这将使主线程在加载时停滞
 	UCommonSharedSettings* SharedSettings = Cast<UCommonSharedSettings>(
 		LoadOrCreateSaveGameForLocalPlayer(UCommonSharedSettings::StaticClass(), LocalPlayer,
-		                                   TEXT("SharedGameSettings")));
+		                                   SHARED_SETTINGS_SLOT_NAME));
 
 	SharedSettings->ApplySettings();
 
@@ -19,22 +31,62 @@ UCommonSharedSettings* UCommonSharedSettings::LoadOrCreateSettings(const UCommon
 
 UCommonSharedSettings* UCommonSharedSettings::CreateTemporarySettings(const UCommonLocalPlayer* LocalPlayer)
 {
-	// This is not loaded from disk but should be set up to save
+	// 这不是从磁盘加载的，但应设置为保存
 	UCommonSharedSettings* SharedSettings = Cast<UCommonSharedSettings>(
 		CreateNewSaveGameForLocalPlayer(UCommonSharedSettings::StaticClass(), LocalPlayer,
-		                                TEXT("SharedGameSettings")));
+		                                SHARED_SETTINGS_SLOT_NAME));
 
 	SharedSettings->ApplySettings();
 
 	return SharedSettings;
 }
 
+bool UCommonSharedSettings::AsyncLoadOrCreateSettings(const UCommonLocalPlayer* LocalPlayer,
+                                                      FOnSettingsLoadedEvent Delegate)
+{
+	FOnLocalPlayerSaveGameLoadedNative Lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda([Delegate]
+	(ULocalPlayerSaveGame* LoadedSave)
+		{
+			UCommonSharedSettings* LoadedSettings = CastChecked<UCommonSharedSettings>(LoadedSave);
+
+			LoadedSettings->ApplySettings();
+
+			Delegate.ExecuteIfBound(LoadedSettings);
+		});
+
+	return ULocalPlayerSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer(
+		UCommonSharedSettings::StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME, Lambda);
+}
+
 void UCommonSharedSettings::SaveSettings()
 {
+	// 安排异步保存，因为如果失败也没关系
+	AsyncSaveGameToSlotForLocalPlayer();
+
+	// TODO_BH: 将其移动到序列化函数中，而不是使用碰撞的版本号
+	if (UEnhancedInputLocalPlayerSubsystem* System = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer))
+	{
+		if (UEnhancedInputUserSettings* InputSettings = System->GetUserSettings())
+		{
+			InputSettings->AsyncSaveSettings();
+		}
+	}
 }
 
 void UCommonSharedSettings::ApplySettings()
 {
+	ApplyBackgroundAudioSettings();
+	ApplyCultureSettings();
+
+	if (UEnhancedInputLocalPlayerSubsystem* System = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer))
+	{
+		if (UEnhancedInputUserSettings* InputSettings = System->GetUserSettings())
+		{
+			InputSettings->ApplySettings();
+		}
+	}
 }
 
 const FString& UCommonSharedSettings::GetPendingCulture() const
@@ -120,4 +172,20 @@ void UCommonSharedSettings::ResetCultureToCurrentSettings()
 {
 	ClearPendingCulture();
 	bResetToDefaultCulture = false;
+}
+
+void UCommonSharedSettings::SetAllowAudioInBackgroundSetting(bool NewValue)
+{
+
+
+	bBackgroundAudioEnabled = NewValue;
+	ApplyBackgroundAudioSettings();
+}
+
+void UCommonSharedSettings::ApplyBackgroundAudioSettings()
+{
+	if (OwningPlayer && OwningPlayer->IsPrimaryPlayer())
+	{
+		FApp::SetUnfocusedVolumeMultiplier(bBackgroundAudioEnabled ? 1.0f : 0.0f);
+	}
 }

@@ -11,6 +11,11 @@ class USoundControlBus;
 /**
  * 针对于特定机器的设置（比如声音图像设置等）
  * 必须在Config\DefaultEngine.ini 中配置
+ * 在编辑器中保存在\YourGameName\Saved\Config\WindowsEditor\GameUserSettings.ini
+ * 在Windows中保存在\YourGameName\Saved\Config\Windows\GameUserSettings.ini
+ * Windows打包之后WindowsNoEditor\项目名\Saved\Config\WindowsNoEditor路径下的GameUserConfig.ini
+ * Android:/storage/emulated/0/Android/data/<YourGamePackageName>/files/Saved/Config/Android/GameUserSettings.ini
+ * IOS:<AppSandbox>/Documents/Saved/Config/IOS/GameUserSettings.ini
  */
 UCLASS()
 class COMMONGAMEPLAY_API UCommonLocalSettings : public UGameUserSettings
@@ -22,6 +27,7 @@ public:
 
 	static UCommonLocalSettings* Get();
 
+	// TODO 图像质量、帧率、移动平台等
 	//~UGameUserSettings interface
 	virtual void SetToDefaults() override;
 	virtual void LoadSettings(bool bForceReload) override;

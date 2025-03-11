@@ -106,9 +106,14 @@ public:
 	// 效果名字
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FName DevName = FName();
+	
 	// 显示名字
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FText DisplayName = FText::GetEmpty();
+
+	// 分类
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 Category = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FGameSettingValue DefaultValue;
@@ -174,11 +179,6 @@ public:
 	FText GetDisplayName() const { return DisplayName; }
 
 	void SetDisplayName(const FText& Value) { DisplayName = Value; }
-
-
-	/*TSubclassOf<UGameSettingCondition> GetConditionClass() const { return DefaultConditionClass; }
-
-	void SetConditionClass(const TSubclassOf<UGameSettingCondition> Value) { DefaultConditionClass = Value; }*/
 
 	FName GetConditionKey() const { return ConditionKey; }
 
@@ -277,13 +277,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSettingEnable(bool bEnable);
-
-	/*
-	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_Show, bool, bShow);
-	FOnCondition_Show OnCondition_ShowDelegate;
-
-	UFUNCTION(BlueprintCallable)
-	void SetSettingShow(bool bShow);*/
 
 	DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCondition_ChangeValue, FGameSettingValue, NewValue);
 
