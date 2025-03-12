@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CommonUIManagerSubsystem.h"
+#include "CommonUISubsystem.h"
 
 #include "Engine/GameInstance.h"
 #include "GameFramework/HUD.h"
@@ -9,11 +9,11 @@
 #include "PrimaryGameLayout.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
 
-UCommonUIManagerSubsystem::UCommonUIManagerSubsystem()
+UCommonUISubsystem::UCommonUISubsystem()
 {
 }
 
-void UCommonUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UCommonUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
@@ -21,10 +21,10 @@ void UCommonUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	 * AddTicker 用于注册一个定时任务，这里的任务是 调用 Tick 方法，并且 0.0f 的参数表示每帧都会执行（即不按时间间隔延迟）。
 	 */
 	TickHandle = FTSTicker::GetCoreTicker().AddTicker(
-		FTickerDelegate::CreateUObject(this, &UCommonUIManagerSubsystem::Tick), 0.0f);
+		FTickerDelegate::CreateUObject(this, &UCommonUISubsystem::Tick), 0.0f);
 }
 
-void UCommonUIManagerSubsystem::Deinitialize()
+void UCommonUISubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 
@@ -32,14 +32,15 @@ void UCommonUIManagerSubsystem::Deinitialize()
 	FTSTicker::GetCoreTicker().RemoveTicker(TickHandle);
 }
 
-bool UCommonUIManagerSubsystem::Tick(float DeltaTime)
+
+bool UCommonUISubsystem::Tick(float DeltaTime)
 {
 	SyncRootLayoutVisibilityToShowHUD();
 	
 	return true;
 }
 
-void UCommonUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
+void UCommonUISubsystem::SyncRootLayoutVisibilityToShowHUD()
 {
 	// 获取当前 UIPolicy
 	if (const UGameUIPolicy* Policy = GetCurrentUIPolicy())

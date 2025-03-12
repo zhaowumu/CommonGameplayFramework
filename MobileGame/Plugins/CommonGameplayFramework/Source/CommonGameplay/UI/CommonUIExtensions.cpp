@@ -9,6 +9,8 @@
 #include "GameUIPolicy.h"
 #include "PrimaryGameLayout.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
+#include "CommonGameplay/System/CommonGameplayTags.h"
+#include "Components/CanvasPanel.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonUIExtensions)
@@ -19,7 +21,8 @@ ECommonInputType UCommonUIExtensions::GetOwningPlayerInputType(const UUserWidget
 {
 	if (WidgetContextObject)
 	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
+		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
+			WidgetContextObject->GetOwningLocalPlayer()))
 		{
 			return InputSubsystem->GetCurrentInputType();
 		}
@@ -32,7 +35,8 @@ bool UCommonUIExtensions::IsOwningPlayerUsingTouch(const UUserWidget* WidgetCont
 {
 	if (WidgetContextObject)
 	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
+		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
+			WidgetContextObject->GetOwningLocalPlayer()))
 		{
 			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Touch;
 		}
@@ -44,7 +48,8 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UUserWidget* WidgetCo
 {
 	if (WidgetContextObject)
 	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
+		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
+			WidgetContextObject->GetOwningLocalPlayer()))
 		{
 			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad;
 		}
@@ -52,7 +57,8 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UUserWidget* WidgetCo
 	return false;
 }
 
-UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UCommonActivatableWidget> WidgetClass)
+UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(
+	const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UCommonActivatableWidget> WidgetClass)
 {
 	if (!ensure(LocalPlayer) || !ensure(WidgetClass != nullptr))
 	{
@@ -73,7 +79,8 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 	return nullptr;
 }
 
-void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSoftClassPtr<UCommonActivatableWidget> WidgetClass)
+void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName,
+                                                               TSoftClassPtr<UCommonActivatableWidget> WidgetClass)
 {
 	if (!ensure(LocalPlayer) || !ensure(!WidgetClass.IsNull()))
 	{
@@ -103,11 +110,13 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 
 	if (const ULocalPlayer* LocalPlayer = ActivatableWidget->GetOwningLocalPlayer())
 	{
-		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<
+			UGameUIManagerSubsystem>())
 		{
 			if (const UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
 			{
-				if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+				if (UPrimaryGameLayout* RootLayout = Policy->
+					GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
 				{
 					RootLayout->FindAndRemoveWidgetFromLayer(ActivatableWidget);
 				}
@@ -169,3 +178,107 @@ void UCommonUIExtensions::ResumeInputForPlayer(ULocalPlayer* LocalPlayer, FName 
 	}
 }
 
+UCommonActivatableWidget* UCommonUIExtensions::GetLayerActivatableContent(const ULocalPlayer* LocalPlayer,
+                                                                          FGameplayTag LayerName)
+{
+	if (LocalPlayer)
+	{
+		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<
+			UGameUIManagerSubsystem>())
+		{
+			if (const UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+			{
+				if (UPrimaryGameLayout* RootLayout = Policy->
+					GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+				{
+					UCommonActivatableWidgetContainerBase* Stack = RootLayout->GetLayerWidget(LayerName);
+					return Stack->GetActiveWidget();
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+UCommonDesktop* UCommonUIExtensions::GetDesktopFromGameLayer(const ULocalPlayer* LocalPlayer)
+{
+	return Cast<UCommonDesktop>(GetLayerActivatableContent(LocalPlayer, CommonGameplayTags::Fei_UI_Layer_Game));
+}
+
+UCommonDesktop* UCommonUIExtensions::ShowDesktopByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonDesktop> DesktopClass)
+{
+	if (!ensure(LocalPlayer) || !ensure(DesktopClass != nullptr))
+	{
+		return nullptr;
+	}
+
+	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	{
+		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+		{
+			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+			{
+				// 移除以前的 Desktop
+				RootLayout->RemoveDesktopWidget(DesktopClass);
+				UCommonDesktop* Desktop = Cast<UCommonDesktop>(
+					RootLayout->PushWidgetToLayerStack(CommonGameplayTags::Fei_UI_Layer_Game, DesktopClass));
+				return Desktop;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void UCommonUIExtensions::HideDesktopByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonDesktop> DesktopClass)
+{
+	if (!ensure(LocalPlayer) || !ensure(DesktopClass != nullptr))
+	{
+		return;
+	}
+
+	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	{
+		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+		{
+			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+			{
+				// 移除以前的 Desktop
+				RootLayout->RemoveDesktopWidget(DesktopClass);
+			}
+		}
+	}
+}
+
+UCommonWindow* UCommonUIExtensions::ShowWindowByClass(const ULocalPlayer* LocalPlayer,
+	TSubclassOf<UCommonWindow> WindowClass)
+{
+	if (!ensure(LocalPlayer) || !ensure(WindowClass != nullptr))
+	{
+		return nullptr;
+	}
+	if (UCommonDesktop* Desktop = GetDesktopFromGameLayer(LocalPlayer))
+	{
+		Desktop->ShowWindowByClass(WindowClass);
+	}
+	return nullptr;
+}
+
+void UCommonUIExtensions::HideWindowByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonWindow> WindowClass)
+{
+	if (!ensure(LocalPlayer) || !ensure(WindowClass != nullptr))
+	{
+		return;
+	}
+
+	if (UCommonDesktop* Desktop = GetDesktopFromGameLayer(LocalPlayer))
+	{
+		Desktop->HideWindowByClass(WindowClass);
+	}
+}
+
+UWidget* UCommonUIExtensions::GetCurrentRootLayout()
+{
+	return nullptr;
+}

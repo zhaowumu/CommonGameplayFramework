@@ -3,20 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonDesktop.h"
 #include "GameUIManagerSubsystem.h"
 
-#include "CommonUIManagerSubsystem.generated.h"
+#include "CommonUISubsystem.generated.h"
 
 /**
  * 通用UI子系统
  */
 UCLASS()
-class COMMONGAMEPLAY_API UCommonUIManagerSubsystem : public UGameUIManagerSubsystem
+class COMMONGAMEPLAY_API UCommonUISubsystem : public UGameUIManagerSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UCommonUIManagerSubsystem();
+	UCommonUISubsystem();
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;

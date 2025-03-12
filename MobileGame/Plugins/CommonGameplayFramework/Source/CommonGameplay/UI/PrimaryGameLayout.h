@@ -119,6 +119,10 @@ public:
 	// Find the widget if it exists on any of the layers and remove it from the layer.在层级中查找并移除widget
 	void FindAndRemoveWidgetFromLayer(UCommonActivatableWidget* ActivatableWidget);
 
+	TArray<UCommonActivatableWidget*> FindWidgetByClass(TSubclassOf<UCommonActivatableWidget> WidgetClass);
+	
+	void RemoveDesktopWidget(TSubclassOf<UCommonDesktop> DesktopWidget);
+
 	// Get the layer widget for the given layer tag.根据TAG获取指定层级的widget
 	UCommonActivatableWidgetContainerBase* GetLayerWidget(FGameplayTag LayerName);
 

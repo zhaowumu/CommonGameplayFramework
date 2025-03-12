@@ -58,7 +58,7 @@ public:
 };
 
 /*
- * UI界面策略
+ * UI界面策略 支持多玩家
  */
 UCLASS(Abstract, Blueprintable, Within = GameUIManagerSubsystem)
 class COMMONGAMEPLAY_API UGameUIPolicy : public UObject

@@ -14,19 +14,22 @@
 
 class UObject;
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer(const UObject* WorldContextObject)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer(const UObject* WorldContextObject)
 {
 	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
 	APlayerController* PlayerController = GameInstance->GetPrimaryPlayerController(false);
 	return GetPrimaryGameLayout(PlayerController);
 }
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(APlayerController* PlayerController)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(APlayerController* PlayerController)
 {
 	return PlayerController ? GetPrimaryGameLayout(Cast<UCommonLocalPlayer>(PlayerController->Player)) : nullptr;
 }
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(ULocalPlayer* LocalPlayer)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(ULocalPlayer* LocalPlayer)
 {
 	if (LocalPlayer)
 	{
@@ -63,7 +66,8 @@ void UPrimaryGameLayout::SetIsDormant(bool InDormant)
 		const TCHAR* OldDormancyStr = bIsDormant ? TEXT("Dormant") : TEXT("Not-Dormant");
 		const TCHAR* NewDormancyStr = InDormant ? TEXT("Dormant") : TEXT("Not-Dormant");
 		const TCHAR* PrimaryPlayerStr = LP && LP->IsPrimaryPlayer() ? TEXT("[Primary]") : TEXT("[Non-Primary]");
-		UE_LOG(LogCommon, Display, TEXT("%s PrimaryGameLayout Dormancy changed for [%d] from [%s] to [%s]"), PrimaryPlayerStr, PlayerId, OldDormancyStr, NewDormancyStr);
+		UE_LOG(LogCommon, Display, TEXT("%s PrimaryGameLayout Dormancy changed for [%d] from [%s] to [%s]"),
+		       PrimaryPlayerStr, PlayerId, OldDormancyStr, NewDormancyStr);
 
 		bIsDormant = InDormant;
 		OnIsDormantChanged();
@@ -74,7 +78,7 @@ void UPrimaryGameLayout::OnIsDormantChanged()
 {
 	//@TODO NDarnell Determine what to do with dormancy, in the past we treated dormancy as a way to shutoff rendering
 	//and the view for the other local players when we force multiple players to use the player view of a single player.
-	
+
 	//if (UCommonLocalPlayer* LocalPlayer = GetOwningLocalPlayer<UCommonLocalPlayer>())
 	//{
 	//	// When the root layout is dormant, we don't want to render anything from the owner's view either
@@ -94,17 +98,21 @@ void UPrimaryGameLayout::RegisterLayer(FGameplayTag LayerTag, UCommonActivatable
 		// TODO: Consider allowing a transition duration, we currently set it to 0, because if it's not 0, the
 		//       transition effect will cause focus to not transition properly to the new widgets when using
 		//       gamepad always.
+		// 考虑允许转换持续时间，我们目前将其设置为0，因为如果它不是0,当始终使用游戏手柄时，过渡效果会导致焦点无法正确过渡到新的小部件。
+
 		LayerWidget->SetTransitionDuration(0.0);
 
 		Layers.Add(LayerTag, LayerWidget);
 	}
 }
 
-void UPrimaryGameLayout::OnWidgetStackTransitioning(UCommonActivatableWidgetContainerBase* Widget, bool bIsTransitioning)
+void UPrimaryGameLayout::OnWidgetStackTransitioning(UCommonActivatableWidgetContainerBase* Widget,
+                                                    bool bIsTransitioning)
 {
 	if (bIsTransitioning)
 	{
-		const FName SuspendToken = UCommonUIExtensions::SuspendInputForPlayer(GetOwningLocalPlayer(), TEXT("GlobalStackTransion"));
+		const FName SuspendToken = UCommonUIExtensions::SuspendInputForPlayer(
+			GetOwningLocalPlayer(), TEXT("GlobalStackTransion"));
 		SuspendInputTokens.Add(SuspendToken);
 	}
 	else
@@ -123,6 +131,55 @@ void UPrimaryGameLayout::FindAndRemoveWidgetFromLayer(UCommonActivatableWidget* 
 	for (const auto& LayerKVP : Layers)
 	{
 		LayerKVP.Value->RemoveWidget(*ActivatableWidget);
+	}
+}
+
+TArray<UCommonActivatableWidget*> UPrimaryGameLayout::FindWidgetByClass(
+	TSubclassOf<UCommonActivatableWidget> WidgetClass)
+{
+	TArray<UCommonActivatableWidget*> OutWidgets;
+
+	for (const TTuple<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>>& LayerKVP : Layers)
+	{
+		UCommonActivatableWidgetContainerBase* LayerContainer = LayerKVP.Value;
+
+		const TArray<UCommonActivatableWidget*>& WidgetArray = LayerContainer->GetWidgetList();
+
+		for (UCommonActivatableWidget* Widget : WidgetArray)
+		{
+			if (Widget->GetClass() == WidgetClass)
+			{
+				OutWidgets.Add(Widget);
+			}
+		}
+	}
+
+	return OutWidgets;
+}
+
+void UPrimaryGameLayout::RemoveDesktopWidget(TSubclassOf<UCommonDesktop> DesktopWidget)
+{
+	if (!DesktopWidget)
+	{
+		return;
+	}
+
+	const TArray<UCommonActivatableWidget*> Widgets = FindWidgetByClass(DesktopWidget);
+
+
+	for (const TTuple<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>>& LayerKVP : Layers)
+	{
+		UCommonActivatableWidgetContainerBase* LayerContainer = LayerKVP.Value;
+
+		const TArray<UCommonActivatableWidget*>& WidgetArray = LayerContainer->GetWidgetList();
+
+		for (UCommonActivatableWidget* Widget : WidgetArray)
+		{
+			if (Widgets.Contains(Widget))
+			{
+				LayerContainer->RemoveWidget(*Widget);
+			}
+		}
 	}
 }
 

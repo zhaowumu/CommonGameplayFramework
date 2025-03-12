@@ -162,11 +162,19 @@ namespace CommonGameplayTags
 
 	
 #pragma region UI
-	
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Game,
-	                               "Fei.UI.Layer.Game",
-	                               "UI层-游戏");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_HUD,
+								   "Fei.UI.Layer.HUD",
+								   "UI层-HUD");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Game,
+							   "Fei.UI.Layer.Game",
+							   "UI层-游戏");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Desktop,
+								   "Fei.UI.Layer.Desktop",
+								   "UI层-桌面");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Window,
 								   "Fei.UI.Layer.Window",
 								   "UI层-窗口");
@@ -178,6 +186,10 @@ namespace CommonGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Modal,
 						   "Fei.UI.Layer.Modal",
 						   "UI层-模态");
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Tips,
+						   "Fei.UI.Layer.Tips",
+						   "UI层-消息");
 
 #pragma endregion
 	

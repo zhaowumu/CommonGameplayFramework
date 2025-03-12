@@ -32,6 +32,7 @@ public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	
 	const UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
+	UFUNCTION(BlueprintCallable)
 	UGameUIPolicy* GetCurrentUIPolicy() { return CurrentPolicy; }
 
 	virtual void NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer);
@@ -45,6 +46,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UGameUIPolicy> CurrentPolicy = nullptr;
 
+	// 如果WorldSetting里面为空，则使用这个DefaultUIPolicyClass
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> DefaultUIPolicyClass;
 };
