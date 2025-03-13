@@ -2,8 +2,6 @@
 
 #include "CommonGameDialog.h"
 
-#include "CommonMessagingSubsystem.h"
-
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonGameDialog)
 
 #define LOCTEXT_NAMESPACE "Messaging"

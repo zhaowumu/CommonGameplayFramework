@@ -38,7 +38,7 @@ UWorld* UGameUIPolicy::GetWorld() const
 	return GetOwningUIManager()->GetGameInstance()->GetWorld();
 }
 
-UPrimaryGameLayout* UGameUIPolicy::GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const
+UPrimaryGameLayout* UGameUIPolicy::GetRootLayout(const ULocalPlayer* LocalPlayer) const
 {
 	const FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer);
 	return LayoutInfo ? LayoutInfo->RootLayout : nullptr;

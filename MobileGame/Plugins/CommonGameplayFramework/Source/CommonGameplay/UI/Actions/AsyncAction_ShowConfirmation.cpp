@@ -2,6 +2,7 @@
 
 #include "AsyncAction_ShowConfirmation.h"
 
+#include "CommonGameplay/UI/CommonGameUISubsystem.h"
 #include "CommonGameplay/UI/Messaging/CommonGameDialog.h"
 #include "Engine/GameInstance.h"
 
@@ -66,10 +67,10 @@ void UAsyncAction_ShowConfirmation::Activate()
 
 	if (TargetLocalPlayer)
 	{
-		if (UCommonMessagingSubsystem* Messaging = TargetLocalPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonMessagingSubsystem* Subsystem = TargetLocalPlayer->GetSubsystem<UCommonMessagingSubsystem>())
 		{
 			FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate::CreateUObject(this, &UAsyncAction_ShowConfirmation::HandleConfirmationResult);
-			Messaging->ShowConfirmation(Descriptor, ResultCallback);
+			Subsystem->ShowConfirmation(Descriptor, ResultCallback);
 			return;
 		}
 	}

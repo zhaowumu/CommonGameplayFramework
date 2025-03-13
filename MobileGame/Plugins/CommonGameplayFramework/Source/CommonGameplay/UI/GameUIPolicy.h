@@ -77,7 +77,7 @@ public:
 public:
 	virtual UWorld* GetWorld() const override;
 	UGameUIManagerSubsystem* GetOwningUIManager() const;
-	UPrimaryGameLayout* GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const;
+	UPrimaryGameLayout* GetRootLayout(const ULocalPlayer* LocalPlayer) const;
 
 	// 获取当前的多玩家交互模式。
 	ELocalMultiplayerInteractionMode GetLocalMultiplayerInteractionMode() const { return LocalMultiplayerInteractionMode; }

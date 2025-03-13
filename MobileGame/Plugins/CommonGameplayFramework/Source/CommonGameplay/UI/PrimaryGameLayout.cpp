@@ -134,7 +134,7 @@ void UPrimaryGameLayout::FindAndRemoveWidgetFromLayer(UCommonActivatableWidget* 
 	}
 }
 
-TArray<UCommonActivatableWidget*> UPrimaryGameLayout::FindWidgetByClass(
+TArray<UCommonActivatableWidget*> UPrimaryGameLayout::FindCommonActivatableWidgetByClass(
 	TSubclassOf<UCommonActivatableWidget> WidgetClass)
 {
 	TArray<UCommonActivatableWidget*> OutWidgets;
@@ -157,14 +157,14 @@ TArray<UCommonActivatableWidget*> UPrimaryGameLayout::FindWidgetByClass(
 	return OutWidgets;
 }
 
-void UPrimaryGameLayout::RemoveDesktopWidget(TSubclassOf<UCommonDesktop> DesktopWidget)
+void UPrimaryGameLayout::RemoveCommonActivatableWidgetByClass(TSubclassOf<UCommonActivatableWidget> ActivatableWidget)
 {
-	if (!DesktopWidget)
+	if (!ActivatableWidget)
 	{
 		return;
 	}
 
-	const TArray<UCommonActivatableWidget*> Widgets = FindWidgetByClass(DesktopWidget);
+	const TArray<UCommonActivatableWidget*> Widgets = FindCommonActivatableWidgetByClass(ActivatableWidget);
 
 
 	for (const TTuple<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>>& LayerKVP : Layers)
@@ -180,6 +180,68 @@ void UPrimaryGameLayout::RemoveDesktopWidget(TSubclassOf<UCommonDesktop> Desktop
 				LayerContainer->RemoveWidget(*Widget);
 			}
 		}
+	}
+}
+
+void UPrimaryGameLayout::RemoveDesktopWidget(TSubclassOf<UCommonDesktop> DesktopWidget)
+{
+	if (!DesktopWidget)
+	{
+		return;
+	}
+
+	const TArray<UCommonActivatableWidget*>& WidgetArray = Game_Stack->GetWidgetList();
+
+	for (UCommonActivatableWidget* Widget : WidgetArray)
+	{
+		if (DesktopWidget == Widget->GetClass())
+		{
+			Game_Stack->RemoveWidget(*Widget);
+		}
+	}
+}
+
+void UPrimaryGameLayout::RemovePanelWidget(TSubclassOf<UCommonPanel> PanelWidget)
+{
+	if (!PanelWidget)
+	{
+		return;
+	}
+
+	const TArray<UCommonActivatableWidget*>& WidgetArray = Panel_Stack->GetWidgetList();
+
+	for (UCommonActivatableWidget* Widget : WidgetArray)
+	{
+		if (PanelWidget == Widget->GetClass())
+		{
+			Panel_Stack->RemoveWidget(*Widget);
+		}
+	}
+}
+
+void UPrimaryGameLayout::PopPanelWidget() const
+{
+	if (UCommonActivatableWidget* curp = Panel_Stack->GetActiveWidget())
+	{
+		// TODO 或者直接detacitve?
+		Panel_Stack->RemoveWidget(*curp);
+	}
+}
+
+void UPrimaryGameLayout::AddPanelWithFunc(TSubclassOf<UCommonPanel> PanelWidget, FOnPanelWidgetAdded Func)
+{
+	if (PanelWidget)
+	{
+		TFunctionRef<void(UCommonActivatableWidget&)> InitInstanceFunc = [Func
+			](UCommonActivatableWidget& WidgetInstance)
+		{
+			if (Func.IsBound())
+			{
+				Func.ExecuteIfBound(&WidgetInstance);
+			}
+		};
+
+		Panel_Stack->AddWidget(PanelWidget, InitInstanceFunc);
 	}
 }
 

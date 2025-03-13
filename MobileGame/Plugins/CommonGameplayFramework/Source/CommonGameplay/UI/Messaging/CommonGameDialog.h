@@ -4,7 +4,6 @@
 
 #include "CommonActivatableWidget.h"
 #include "CommonMessagingSubsystem.h"
-
 #include "CommonGameDialog.generated.h"
 
 USTRUCT(BlueprintType)

@@ -9,9 +9,9 @@
 #include "CommonUserSubsystem.h"
 #include "ICommonUIModule.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
+#include "CommonGameplay/UI/CommonGameUISubsystem.h"
 #include "CommonGameplay/UI/GameUIManagerSubsystem.h"
 #include "CommonGameplay/UI/Messaging/CommonGameDialog.h"
-#include "CommonGameplay/UI/Messaging/CommonMessagingSubsystem.h"
 
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonGameInstance)
@@ -29,9 +29,9 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 	// 如果消息类型是错误类型，它会将错误消息显示给第一个玩家。
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
-		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonMessagingSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
 		{
-			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
+			Subsystem->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 		}
 	}
 }

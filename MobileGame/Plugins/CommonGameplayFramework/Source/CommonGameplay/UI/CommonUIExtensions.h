@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CommonDesktop.h"
+#include "CommonPanel.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/SoftObjectPtr.h"
 
@@ -44,21 +45,23 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions")
 	static UCommonActivatableWidget* PushContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer,
-	                                                              UPARAM(meta = (Categories = "Fei.UI.Layer")) FGameplayTag
+	                                                              UPARAM(meta = (Categories = "Fei.UI.Layer"))
+	                                                              FGameplayTag
 	                                                              LayerName,
 	                                                              UPARAM(meta = (AllowAbstract = false)) TSubclassOf<
 		                                                              UCommonActivatableWidget> WidgetClass);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions")
 	static void PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer,
-	                                                 UPARAM(meta = (Categories = "Fei.UI.Layer")) FGameplayTag LayerName,
+	                                                 UPARAM(meta = (Categories = "Fei.UI.Layer")) FGameplayTag
+	                                                 LayerName,
 	                                                 UPARAM(meta = (AllowAbstract = false)) TSoftClassPtr<
 		                                                 UCommonActivatableWidget> WidgetClass);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions")
 	static void PopContentFromLayer(UCommonActivatableWidget* ActivatableWidget);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions")
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions")
 	static ULocalPlayer* GetLocalPlayerFromController(APlayerController* PlayerController);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions")
@@ -74,27 +77,11 @@ public:
 
 	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions")
 	static UCommonActivatableWidget* GetLayerActivatableContent(const ULocalPlayer* LocalPlayer,
-	                                                     UPARAM(meta = (Categories = "Fei.UI.Layer")) FGameplayTag
-	                                                     LayerName);
+	                                                            UPARAM(meta = (Categories = "Fei.UI.Layer"))
+	                                                            FGameplayTag
+	                                                            LayerName);
 	
-	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions")
-	static UCommonDesktop* GetDesktopFromGameLayer(const ULocalPlayer* LocalPlayer);
 
-
-	UFUNCTION(BlueprintCallable, Category=CommonUISubsystem, meta=(DeterminesOutputType="DesktopClass"))
-	UCommonDesktop* ShowDesktopByClass(const ULocalPlayer* LocalPlayer,TSubclassOf<UCommonDesktop> DesktopClass);
-
-	UFUNCTION(BlueprintCallable, Category=CommonUISubsystem)
-	void HideDesktopByClass(const ULocalPlayer* LocalPlayer,TSubclassOf<UCommonDesktop> DesktopClass);
-
-	UFUNCTION(BlueprintCallable, Category=CommonUISubsystem, meta=(DeterminesOutputType="WindowClass"))
-	UCommonWindow* ShowWindowByClass(const ULocalPlayer* LocalPlayer,TSubclassOf<UCommonWindow> WindowClass);
-
-	UFUNCTION(BlueprintCallable, Category=CommonUISubsystem)
-	void HideWindowByClass(const ULocalPlayer* LocalPlayer,TSubclassOf<UCommonWindow> WindowClass);
-
-	UFUNCTION(BlueprintCallable, Category=CommonUISubsystem)
-	UWidget* GetCurrentRootLayout();
 
 private:
 	static int32 InputSuspensions;

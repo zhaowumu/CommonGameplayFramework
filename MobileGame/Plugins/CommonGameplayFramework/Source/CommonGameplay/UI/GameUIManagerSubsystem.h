@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include "PrimaryGameLayout.h"
+
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UObject/SoftObjectPtr.h"
-
 #include "GameUIManagerSubsystem.generated.h"
+
+class UCommonGameDialog;
+class UCommonGameDialogDescriptor;
 
 class FSubsystemCollectionBase;
 class UCommonLocalPlayer;
@@ -23,21 +27,30 @@ UCLASS(Abstract, config = Game)
 class COMMONGAMEPLAY_API UGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	
+
 public:
-	UGameUIManagerSubsystem() { }
-	
+	UGameUIManagerSubsystem()
+	{
+	}
+
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	
+
 	const UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
 	UFUNCTION(BlueprintCallable)
 	UGameUIPolicy* GetCurrentUIPolicy() { return CurrentPolicy; }
 
+	UFUNCTION(BlueprintCallable)
+	UPrimaryGameLayout* GetPlayerGameLayout(const ULocalPlayer* LocalPlayer);
+
+	UFUNCTION(BlueprintCallable)
+	UCommonDesktop* GetPlayerDesktop(const ULocalPlayer* LocalPlayer);
+
 	virtual void NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer);
 	virtual void NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer);
 	virtual void NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPlayer);
+
 
 protected:
 	void SwitchToPolicy(UGameUIPolicy* InPolicy);
@@ -49,4 +62,5 @@ private:
 	// 如果WorldSetting里面为空，则使用这个DefaultUIPolicyClass
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> DefaultUIPolicyClass;
+	
 };

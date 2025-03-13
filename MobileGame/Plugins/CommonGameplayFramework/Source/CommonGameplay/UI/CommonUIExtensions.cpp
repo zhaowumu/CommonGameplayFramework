@@ -188,8 +188,7 @@ UCommonActivatableWidget* UCommonUIExtensions::GetLayerActivatableContent(const 
 		{
 			if (const UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
 			{
-				if (UPrimaryGameLayout* RootLayout = Policy->
-					GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+				if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(LocalPlayer))
 				{
 					UCommonActivatableWidgetContainerBase* Stack = RootLayout->GetLayerWidget(LayerName);
 					return Stack->GetActiveWidget();
@@ -198,87 +197,5 @@ UCommonActivatableWidget* UCommonUIExtensions::GetLayerActivatableContent(const 
 		}
 	}
 
-	return nullptr;
-}
-
-UCommonDesktop* UCommonUIExtensions::GetDesktopFromGameLayer(const ULocalPlayer* LocalPlayer)
-{
-	return Cast<UCommonDesktop>(GetLayerActivatableContent(LocalPlayer, CommonGameplayTags::Fei_UI_Layer_Game));
-}
-
-UCommonDesktop* UCommonUIExtensions::ShowDesktopByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonDesktop> DesktopClass)
-{
-	if (!ensure(LocalPlayer) || !ensure(DesktopClass != nullptr))
-	{
-		return nullptr;
-	}
-
-	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
-	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-			{
-				// 移除以前的 Desktop
-				RootLayout->RemoveDesktopWidget(DesktopClass);
-				UCommonDesktop* Desktop = Cast<UCommonDesktop>(
-					RootLayout->PushWidgetToLayerStack(CommonGameplayTags::Fei_UI_Layer_Game, DesktopClass));
-				return Desktop;
-			}
-		}
-	}
-
-	return nullptr;
-}
-
-void UCommonUIExtensions::HideDesktopByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonDesktop> DesktopClass)
-{
-	if (!ensure(LocalPlayer) || !ensure(DesktopClass != nullptr))
-	{
-		return;
-	}
-
-	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
-	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-			{
-				// 移除以前的 Desktop
-				RootLayout->RemoveDesktopWidget(DesktopClass);
-			}
-		}
-	}
-}
-
-UCommonWindow* UCommonUIExtensions::ShowWindowByClass(const ULocalPlayer* LocalPlayer,
-	TSubclassOf<UCommonWindow> WindowClass)
-{
-	if (!ensure(LocalPlayer) || !ensure(WindowClass != nullptr))
-	{
-		return nullptr;
-	}
-	if (UCommonDesktop* Desktop = GetDesktopFromGameLayer(LocalPlayer))
-	{
-		Desktop->ShowWindowByClass(WindowClass);
-	}
-	return nullptr;
-}
-
-void UCommonUIExtensions::HideWindowByClass(const ULocalPlayer* LocalPlayer, TSubclassOf<UCommonWindow> WindowClass)
-{
-	if (!ensure(LocalPlayer) || !ensure(WindowClass != nullptr))
-	{
-		return;
-	}
-
-	if (UCommonDesktop* Desktop = GetDesktopFromGameLayer(LocalPlayer))
-	{
-		Desktop->HideWindowByClass(WindowClass);
-	}
-}
-
-UWidget* UCommonUIExtensions::GetCurrentRootLayout()
-{
 	return nullptr;
 }

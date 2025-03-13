@@ -9,8 +9,8 @@
 #include "CommonUserSubsystem.h"
 
 #include "ICommonUIModule.h"
+#include "CommonGameplay/UI/CommonGameUISubsystem.h"
 #include "CommonGameplay/UI/Messaging/CommonGameDialog.h"
-#include "CommonGameplay/UI/Messaging/CommonMessagingSubsystem.h"
 
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonPlatformGameInstance)
@@ -26,9 +26,9 @@ void UCommonPlatformGameInstance::HandleSystemMessage(FGameplayTag MessageType, 
 	// Forward severe ones to the error dialog for the first player
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
-		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonMessagingSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
 		{
-			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
+			Subsystem->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 		}
 	}
 }

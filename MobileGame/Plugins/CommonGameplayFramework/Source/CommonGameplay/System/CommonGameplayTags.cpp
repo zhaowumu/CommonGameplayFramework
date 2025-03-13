@@ -171,17 +171,17 @@ namespace CommonGameplayTags
 							   "Fei.UI.Layer.Game",
 							   "UI层-游戏");
 
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Desktop,
+	/*UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Desktop,
 								   "Fei.UI.Layer.Desktop",
 								   "UI层-桌面");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Window,
 								   "Fei.UI.Layer.Window",
-								   "UI层-窗口");
+								   "UI层-窗口");*/
 
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Menu,
-							   "Fei.UI.Layer.Menu",
-							   "UI层-菜单");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Panel,
+							   "Fei.UI.Layer.Panel",
+							   "UI层-Panel");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fei_UI_Layer_Modal,
 						   "Fei.UI.Layer.Modal",

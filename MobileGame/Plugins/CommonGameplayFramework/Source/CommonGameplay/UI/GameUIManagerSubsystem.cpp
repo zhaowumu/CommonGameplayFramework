@@ -16,6 +16,18 @@ void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	/*
+	checkf(!ConfirmationDialogClass.IsNull(), TEXT("ConfirmationDialogClass is null"))
+	checkf(!ErrorDialogClass.IsNull(), TEXT("ErrorDialogClass is null"))
+
+	if (ErrorDialogClass.IsValid() && ErrorDialogClass.IsValid())
+	{
+		ConfirmationDialogClassPtr = ConfirmationDialogClass.LoadSynchronous();
+		ErrorDialogClassPtr = ErrorDialogClass.LoadSynchronous();
+	}
+	*/
+
+
 	if (!CurrentPolicy && !DefaultUIPolicyClass.IsNull())
 	{
 		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
@@ -42,6 +54,31 @@ bool UGameUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	}
 
 	return false;
+}
+
+
+UPrimaryGameLayout* UGameUIManagerSubsystem::GetPlayerGameLayout(const ULocalPlayer* LocalPlayer)
+{
+	if (!LocalPlayer)
+	{
+		return nullptr;
+	}
+	if (UGameUIPolicy* Policy = GetCurrentUIPolicy())
+	{
+		return Policy->GetRootLayout(LocalPlayer);
+	}
+
+	return nullptr;
+}
+
+UCommonDesktop* UGameUIManagerSubsystem::GetPlayerDesktop(const ULocalPlayer* LocalPlayer)
+{
+	if (UPrimaryGameLayout* Layout = GetPlayerGameLayout(LocalPlayer))
+	{
+		return Cast<UCommonDesktop>(Layout->Game_Stack->GetActiveWidget());
+	}
+
+	return nullptr;
 }
 
 void UGameUIManagerSubsystem::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
