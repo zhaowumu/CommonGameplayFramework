@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CommonActivatableWidget.h"
-#include "CommonMessagingSubsystem.h"
+#include "CommonLocalPlayerSubsystem.h"
 #include "CommonGameDialog.generated.h"
 
 USTRUCT(BlueprintType)

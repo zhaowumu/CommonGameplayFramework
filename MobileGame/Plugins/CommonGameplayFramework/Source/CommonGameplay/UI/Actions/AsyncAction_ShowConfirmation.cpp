@@ -67,7 +67,7 @@ void UAsyncAction_ShowConfirmation::Activate()
 
 	if (TargetLocalPlayer)
 	{
-		if (UCommonMessagingSubsystem* Subsystem = TargetLocalPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonLocalPlayerSubsystem* Subsystem = TargetLocalPlayer->GetSubsystem<UCommonLocalPlayerSubsystem>())
 		{
 			FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate::CreateUObject(this, &UAsyncAction_ShowConfirmation::HandleConfirmationResult);
 			Subsystem->ShowConfirmation(Descriptor, ResultCallback);

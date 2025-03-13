@@ -29,7 +29,7 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 	// 如果消息类型是错误类型，它会将错误消息显示给第一个玩家。
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
-		if (UCommonMessagingSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonLocalPlayerSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonLocalPlayerSubsystem>())
 		{
 			Subsystem->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 		}

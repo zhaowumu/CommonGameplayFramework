@@ -26,7 +26,7 @@ void UCommonPlatformGameInstance::HandleSystemMessage(FGameplayTag MessageType, 
 	// Forward severe ones to the error dialog for the first player
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
-		if (UCommonMessagingSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+		if (UCommonLocalPlayerSubsystem* Subsystem = FirstPlayer->GetSubsystem<UCommonLocalPlayerSubsystem>())
 		{
 			Subsystem->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 		}

@@ -4,8 +4,9 @@
 
 #include "Subsystems/LocalPlayerSubsystem.h"
 
-#include "CommonMessagingSubsystem.generated.h"
+#include "CommonLocalPlayerSubsystem.generated.h"
 
+class UCommonGameDialog;
 class FSubsystemCollectionBase;
 class UCommonGameDialogDescriptor;
 class UObject;
@@ -31,12 +32,12 @@ DECLARE_DELEGATE_OneParam(FCommonMessagingResultDelegate, ECommonMessagingResult
  * 通用消息子系统
  */
 UCLASS(config = Game)
-class COMMONGAMEPLAY_API UCommonMessagingSubsystem : public ULocalPlayerSubsystem
+class COMMONGAMEPLAY_API UCommonLocalPlayerSubsystem : public ULocalPlayerSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UCommonMessagingSubsystem() { }
+	UCommonLocalPlayerSubsystem() { }
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
@@ -46,5 +47,16 @@ public:
 	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
 
 private:
+	UPROPERTY()
+	TSubclassOf<UCommonGameDialog> ConfirmationDialogClassPtr;
+
+	UPROPERTY()
+	TSubclassOf<UCommonGameDialog> ErrorDialogClassPtr;
+
+	UPROPERTY(config)
+	TSoftClassPtr<UCommonGameDialog> ConfirmationDialogClass;
+
+	UPROPERTY(config)
+	TSoftClassPtr<UCommonGameDialog> ErrorDialogClass;
 
 };
