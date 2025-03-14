@@ -9,12 +9,11 @@
 #include "CommonDevelopSettings.generated.h"
 
 
-
 class UGameUIPolicy;
 /**
  * 
  */
-UCLASS(config=CommonGameplayFramework, defaultconfig, meta=(DisplayName="CommonGameplayFramework"))
+UCLASS(config=CommonGameplaySetting, DefaultConfig)
 class COMMONGAMEPLAY_API UCommonDeveloperSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

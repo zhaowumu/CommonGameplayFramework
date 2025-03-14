@@ -16,10 +16,10 @@ void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	/*
-	checkf(!ConfirmationDialogClass.IsNull(), TEXT("ConfirmationDialogClass is null"))
-	checkf(!ErrorDialogClass.IsNull(), TEXT("ErrorDialogClass is null"))
+	
+	checkf(!DefaultUIPolicyClass.IsNull(), TEXT("DefaultUIPolicyClass is null"))
 
+	/*
 	if (ErrorDialogClass.IsValid() && ErrorDialogClass.IsValid())
 	{
 		ConfirmationDialogClassPtr = ConfirmationDialogClass.LoadSynchronous();

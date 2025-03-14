@@ -23,7 +23,7 @@ class UObject;
  * If you just need the basic functionality you will start by sublcassing this
  * subsystem in your own game.
  */
-UCLASS(Abstract, config = Game)
+UCLASS(Abstract, config = CommonGameplayFramework)
 class COMMONGAMEPLAY_API UGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -51,7 +51,6 @@ public:
 	virtual void NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer);
 	virtual void NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPlayer);
 
-
 protected:
 	void SwitchToPolicy(UGameUIPolicy* InPolicy);
 
@@ -62,5 +61,4 @@ private:
 	// 如果WorldSetting里面为空，则使用这个DefaultUIPolicyClass
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> DefaultUIPolicyClass;
-	
 };
