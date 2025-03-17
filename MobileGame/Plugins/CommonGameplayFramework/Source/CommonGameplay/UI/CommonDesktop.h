@@ -25,9 +25,16 @@ public:
 
 	void HideWindowByClass(TSubclassOf<UCommonWindow> WindowClass);
 
+	UCommonWindow* FindWindowByClass(TSubclassOf<UCommonWindow> WindowClass);
+
+
 private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<UCommonWindow>> ChildWindows;
+
+	UPROPERTY()
+	TObjectPtr<UCommonWindow> TopActiveWindow;
 	
 };
+
