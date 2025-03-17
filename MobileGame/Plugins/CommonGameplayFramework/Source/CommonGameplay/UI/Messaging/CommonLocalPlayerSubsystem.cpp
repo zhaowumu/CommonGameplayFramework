@@ -4,6 +4,7 @@
 #include "CommonGameDialog.h"
 #include "CommonGameplay/Player/CommonLocalPlayer.h"
 #include "CommonGameplay/System/CommonGameplayTags.h"
+#include "CommonGameplay/System/CommonLogChannels.h"
 #include "CommonGameplay/UI/CommonGameUISubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
@@ -19,13 +20,15 @@ void UCommonLocalPlayerSubsystem::Initialize(FSubsystemCollectionBase& Collectio
 	Super::Initialize(Collection);
 
 
-	checkf(ConfirmationDialogClass.IsNull() || ErrorDialogClass.IsNull(),
-	       TEXT("ConfirmationDialogClass and ErrorDialogClass must be set in the subsystem's settings"));
+	//checkf(ConfirmationDialogClass,TEXT("ConfirmationDialogClass must be set in the subsystem's settings"));
 
-	if (ConfirmationDialogClass.IsValid() && ErrorDialogClass.IsValid())
+	ConfirmationDialogClassPtr = ConfirmationDialogClass.LoadSynchronous();
+	ErrorDialogClassPtr = ErrorDialogClass.LoadSynchronous();
+
+	if (ConfirmationDialogClassPtr || ConfirmationDialogClassPtr)
 	{
-		ConfirmationDialogClassPtr = ConfirmationDialogClass.LoadSynchronous();
-		ErrorDialogClassPtr = ErrorDialogClass.LoadSynchronous();
+		UE_LOG(LogCommon, Error,
+		       TEXT("ConfirmationDialogClass or ErrorDialogClass is not set in the subsystem's settings"));
 	}
 }
 

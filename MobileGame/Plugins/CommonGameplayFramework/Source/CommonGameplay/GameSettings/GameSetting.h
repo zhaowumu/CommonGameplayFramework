@@ -13,7 +13,7 @@ class UGameSetting;
 class UGameSettingCondition;
 class UCommonSettingData;
 
-/** Why did the setting change? */
+/** 改变原因 */
 UENUM(BlueprintType)
 enum class EGameSettingChangeReason : uint8
 {

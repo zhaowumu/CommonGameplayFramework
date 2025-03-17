@@ -31,20 +31,24 @@ DECLARE_DELEGATE_OneParam(FCommonMessagingResultDelegate, ECommonMessagingResult
 /**
  * 通用消息子系统
  */
-UCLASS(config = Game)
+UCLASS(config = CommonGameplayFramework)
 class COMMONGAMEPLAY_API UCommonLocalPlayerSubsystem : public ULocalPlayerSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UCommonLocalPlayerSubsystem() { }
+	UCommonLocalPlayerSubsystem()
+	{
+	}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
-	virtual void ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
-	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
+	virtual void ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor,
+	                              FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
+	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor,
+	                       FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
 
 private:
 	UPROPERTY()
@@ -58,5 +62,4 @@ private:
 
 	UPROPERTY(config)
 	TSoftClassPtr<UCommonGameDialog> ErrorDialogClass;
-
 };
