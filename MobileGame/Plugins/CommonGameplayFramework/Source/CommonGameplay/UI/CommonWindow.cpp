@@ -4,8 +4,10 @@
 #include "CommonWindow.h"
 
 #include "CommonDesktop.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+
 
 void UCommonWindow::SetZOrder(int32 InZOrder)
 {
@@ -18,7 +20,19 @@ void UCommonWindow::SetZOrder(int32 InZOrder)
 	}
 }
 
-void UCommonWindow::SetPosition(FVector2D InPos)
+FVector2D UCommonWindow::GetPosition()
+{
+	FVector2D pos = FVector2D::ZeroVector;
+	UCanvasPanelSlot* slot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+
+	if (slot)
+	{
+		pos = slot->GetPosition();
+	}
+	return pos;
+}
+
+/*void UCommonWindow::SetPosition(FVector2D InPos)
 {
 	UCanvasPanelSlot* slot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
 
@@ -26,6 +40,54 @@ void UCommonWindow::SetPosition(FVector2D InPos)
 	{
 		slot->SetPosition(InPos);
 	}
+}*/
+
+void UCommonWindow::SafeSetPosition(FVector2D InPos)
+{
+	UCanvasPanelSlot* slot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+
+	if (!slot)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UBaseWindow::SaveSetPosition 窗口: %s 没有有效的slot"), *this->GetName());
+		return;
+	}
+
+	FVector2D viewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld()) /
+		UWidgetLayoutLibrary::GetViewportScale(GetWorld());
+
+	FVector2D size = this->GetCachedGeometry().Size;
+
+	FVector2D safeTargetPos = InPos;
+
+	safeTargetPos.X = FMath::Clamp(safeTargetPos.X,
+	                               size.X * WindowMargin.Left,
+	                               viewportSize.X - (size.X * (WindowMargin.Right +
+		                               1))
+	);
+
+	safeTargetPos.Y = FMath::Clamp(safeTargetPos.Y,
+	                               size.Y * WindowMargin.Top,
+	                               viewportSize.Y - (size.Y * (WindowMargin.Bottom
+		                               + 1))
+	);
+	LastDisplayPosition = safeTargetPos;
+	slot->SetPosition(safeTargetPos);
+}
+
+
+void UCommonWindow::NativeOnShow()
+{
+	SetZOrder(200);
+	OnShow();
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	LastDisplayPosition = DefaultPosition;
+	Button_Close->OnClicked.AddDynamic(this, &UCommonWindow::OnCloseClicked);
+}
+
+void UCommonWindow::NativeOnHide()
+{
+	SetZOrder(200);
+	OnHide();
 }
 
 void UCommonWindow::OnCloseClicked()
@@ -36,19 +98,6 @@ void UCommonWindow::OnCloseClicked()
 	}
 }
 
-void UCommonWindow::NativeOnShow()
-{
-	SetZOrder(200);
-	OnShow();
-
-	Button_Close->OnClicked.AddDynamic(this, &UCommonWindow::OnCloseClicked);
-}
-
-void UCommonWindow::NativeOnHide()
-{
-	SetZOrder(200);
-	OnHide();
-}
 
 void UCommonWindow::NativeOnActivated()
 {
@@ -56,7 +105,7 @@ void UCommonWindow::NativeOnActivated()
 	SetZOrder(300);
 
 	// 设置窗口的
-	SetPosition(DefaultPosition);
+	SafeSetPosition(LastDisplayPosition);
 
 	OnActivated();
 }
@@ -65,4 +114,101 @@ void UCommonWindow::NativeOnDeactivated()
 {
 	SetZOrder(200);
 	OnDeactivated();
+}
+
+
+FReply UCommonWindow::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		// 检查是否点击了 Button_Title
+		if (Image_Title)
+		{
+			// 获取 Button_Title 的几何信息                
+			FGeometry ButtonGeometry = Image_Title->GetCachedGeometry();
+
+			// 将鼠标点击的位置转换为 Button_Title 的局部坐标
+			FVector2D LocalMousePosition = InMouseEvent.GetScreenSpacePosition();
+
+			// 检查鼠标点击的位置是否在 Button_Title 的边界内
+			if (ButtonGeometry.IsUnderLocation(LocalMousePosition))
+			{
+				// 点击了 Button_Title，开始拖动
+				bIsDragging = true;
+				// 左上角位置
+				StartDragWindowPosition = GetPosition();
+
+				// 鼠标位置
+				StartDragMouseViewportPosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+
+				// 置顶窗口
+				if (ParentDesktop)
+				{
+					ParentDesktop->ShowWindowByClass(GetClass());
+				}
+
+				FEventReply replay = UWidgetBlueprintLibrary::DetectDragIfPressed(
+					InMouseEvent, this, EKeys::LeftMouseButton);
+				return replay.NativeReply;
+			}
+		}
+
+		// 置顶窗口
+		if (ParentDesktop)
+		{
+			ParentDesktop->ShowWindowByClass(GetClass());
+		}
+	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+                                         UDragDropOperation*& OutOperation)
+{
+	if (bIsDragging)
+	{
+		SetRenderOpacity(0.5f);
+		UDragDropOperation* DDO = NewObject<UDragDropOperation>();
+		DDO->DefaultDragVisual = this;
+		DDO->Pivot = EDragPivot::MouseDown;
+		DDO->Offset = FVector2D(0, 0);
+		OutOperation = DDO;
+	}
+
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+}
+
+void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	SetRenderOpacity(1.0f);
+	FVector2D cur = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+
+	FVector2D targetPos = cur - StartDragMouseViewportPosition +
+		StartDragWindowPosition;
+	// 安全的设置位置不要超出边界
+	SafeSetPosition(targetPos);
+
+	bIsDragging = false;
+
+
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+}
+
+FReply UCommonWindow::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FEventReply EventReply;
+	EventReply.NativeReply = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+
+	/* 如果蓝图没有处理,将由我们处理 */
+	if (!EventReply.NativeReply.IsEventHandled())
+	{
+		EventReply.NativeReply = FReply::Handled();
+	}
+
+	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		EventReply.NativeReply.EndDragDrop().ReleaseMouseCapture();
+	}
+	return EventReply.NativeReply;
 }

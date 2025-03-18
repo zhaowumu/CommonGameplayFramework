@@ -74,8 +74,16 @@ void UCommonDesktop::HideWindowByClass(TSubclassOf<UCommonWindow> WindowClass)
 
 		// 如果不是顶层，则先隐藏再删除
 		TempWind->NativeOnHide();
-		TempWind->RemoveFromParent();
-		ChildWindows.Remove(TempWind);
+
+		if (TempWind->bHideDestroy)
+		{
+			TempWind->RemoveFromParent();
+			ChildWindows.Remove(TempWind);
+		}else
+		{
+			TempWind->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
 	}
 }
 
