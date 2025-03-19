@@ -195,7 +195,7 @@ void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	InOperation->DefaultDragVisual->RemoveFromParent();
+	//InOperation->DefaultDragVisual->RemoveFromParent();
 	SetRenderOpacity(1.0f);
 	FVector2D cur = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 
