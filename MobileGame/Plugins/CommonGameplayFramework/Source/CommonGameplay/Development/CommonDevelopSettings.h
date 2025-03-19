@@ -9,6 +9,7 @@
 #include "CommonDevelopSettings.generated.h"
 
 
+class UCopyWidgetBox;
 class UGameUIPolicy;
 /**
  * 
@@ -41,6 +42,10 @@ public:
 
 	UPROPERTY(config, EditAnywhere, Category = GameSettings)
 	TSoftObjectPtr<UDataTable> GameSettingDataTable;
+
+	// 默
+	UPROPERTY(config, EditAnywhere, Category=LoadingScreen, meta=(MetaClass="/Script/UMG.UserWidget"))
+	TSoftClassPtr<UCopyWidgetBox> CopyWidgetClass;
 
 	UFUNCTION(BlueprintPure, Category=GameSettings)
 	static TArray<FCommonSettingCfgData> GetAllGameSettingDataList();

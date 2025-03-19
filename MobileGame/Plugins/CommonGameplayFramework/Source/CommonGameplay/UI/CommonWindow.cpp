@@ -6,7 +6,9 @@
 #include "CommonDesktop.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "CommonGameplay/Development/CommonDevelopSettings.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Widget/CopyWidgetBox.h"
 
 
 void UCommonWindow::SetZOrder(int32 InZOrder)
@@ -168,12 +170,24 @@ void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 {
 	if (bIsDragging)
 	{
-		SetRenderOpacity(0.5f);
-		UDragDropOperation* DDO = NewObject<UDragDropOperation>();
+		UDragDropOperation* DDO = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
+
+
+		/*UCopyWidgetBox* showWidget = CreateWidget<UCopyWidgetBox>(
+			GetWorld(), UCommonDeveloperSettings::Get()->CopyWidgetClass.LoadSynchronous());
+
+		if (showWidget)
+		{
+			showWidget->AddChildWidgetToSlate(this);
+		}*/
+
+		//UCommonWindow* WidgetToDrag = DuplicateObject<UCommonWindow>(this, GetWorld());
+
 		DDO->DefaultDragVisual = this;
 		DDO->Pivot = EDragPivot::MouseDown;
 		DDO->Offset = FVector2D(0, 0);
 		OutOperation = DDO;
+		SetRenderOpacity(0.3f);
 	}
 
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
@@ -181,6 +195,7 @@ void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	InOperation->DefaultDragVisual->RemoveFromParent();
 	SetRenderOpacity(1.0f);
 	FVector2D cur = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 
@@ -195,12 +210,20 @@ void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent,
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 }
 
+bool UCommonWindow::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	
+	return Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
+	
+}
+
 FReply UCommonWindow::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	FEventReply EventReply;
+	/*FEventReply EventReply;
 	EventReply.NativeReply = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
-	/* 如果蓝图没有处理,将由我们处理 */
+	/* 如果蓝图没有处理,将由我们处理 #1#
 	if (!EventReply.NativeReply.IsEventHandled())
 	{
 		EventReply.NativeReply = FReply::Handled();
@@ -210,5 +233,7 @@ FReply UCommonWindow::NativeOnMouseButtonUp(const FGeometry& InGeometry, const F
 	{
 		EventReply.NativeReply.EndDragDrop().ReleaseMouseCapture();
 	}
-	return EventReply.NativeReply;
+	return EventReply.NativeReply;*/
+
+	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 }
