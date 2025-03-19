@@ -41,6 +41,10 @@ class COMMONGAMEPLAY_API UPrimaryGameLayout : public UCommonUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(BindWidget))
+	UCommonActivatableWidgetStack* HUD_Stack;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(BindWidget))
 	UCommonActivatableWidgetStack* Game_Stack;
 

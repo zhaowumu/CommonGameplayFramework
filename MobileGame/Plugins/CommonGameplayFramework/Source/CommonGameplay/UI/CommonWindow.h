@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Window)
 	FMargin WindowMargin = FMargin(0.0f);
 
-	// 窗口移动边距
+	// 窗口隐藏时直接销毁
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Window)
 	bool bHideDestroy = true;
 
