@@ -228,7 +228,9 @@ void ULoadingScreenManager::UpdateLoadingScreen()
 	{
 		const UCommonLoadingScreenSettings* Settings = GetDefault<UCommonLoadingScreenSettings>();
 		
-		// If we don't make it to the specified checkpoint in the given time will trigger the hang detector so we can better determine where progress stalled.
+		/* If we don't make it to the specified checkpoint in the given time will trigger the hang detector so we can better determine where progress stalled.
+		 * 如果我们没有在给定时间内到达指定的检查点，将触发挂起检测器，以便我们更好地确定进度停滞的位置。
+		 */
  		FThreadHeartBeat::Get().MonitorCheckpointStart(GetFName(), Settings->LoadingScreenHeartbeatHangDuration);
 
 		ShowLoadingScreen();
@@ -255,6 +257,7 @@ void ULoadingScreenManager::UpdateLoadingScreen()
 bool ULoadingScreenManager::CheckForAnyNeedToShowLoadingScreen()
 {
 	// Start out with 'unknown' reason in case someone forgets to put a reason when changing this in the future.
+	//从“未知”的原因开始，以防将来有人在更改时忘记说明原因。
 	DebugReasonForShowingOrHidingLoadingScreen = TEXT("Reason for Showing/Hiding LoadingScreen is unknown!");
 
 	const UGameInstance* LocalGameInstance = GetGameInstance();
@@ -288,6 +291,7 @@ bool ULoadingScreenManager::CheckForAnyNeedToShowLoadingScreen()
 		return true;
 	}
 
+	// 真正的在加载地图中
 	if (bCurrentlyInLoadMap)
 	{
 		// Show a loading screen if we are in LoadMap
@@ -295,6 +299,7 @@ bool ULoadingScreenManager::CheckForAnyNeedToShowLoadingScreen()
 		return true;
 	}
 
+	// 传送中
 	if (!Context->TravelURL.IsEmpty())
 	{
 		// Show a loading screen when pending travel
@@ -409,6 +414,7 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 	const UCommonLoadingScreenSettings* Settings = GetDefault<UCommonLoadingScreenSettings>();
 
 	// Check debugging commands that force the state one way or another
+	// 在非发行版本中，检查是否有命令行参数强制禁用加载屏幕
 #if !UE_BUILD_SHIPPING
 	static bool bCmdLineNoLoadingScreen = FParse::Param(FCommandLine::Get(), TEXT("NoLoadingScreen"));
 	if (bCmdLineNoLoadingScreen)
@@ -419,6 +425,7 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 #endif
 
 	// Can't show a loading screen if there's no game viewport
+	// 如果游戏实例没有视口客户端，则无法显示加载屏幕
 	UGameInstance* LocalGameInstance = GetGameInstance();
 	if (LocalGameInstance->GetGameViewportClient() == nullptr)
 	{
@@ -426,9 +433,11 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 	}
 
 	// Check for a need to show the loading screen
+	// 检查是否有需要显示加载屏幕的情况
 	const bool bNeedToShowLoadingScreen = CheckForAnyNeedToShowLoadingScreen();
 
 	// Keep the loading screen up a bit longer if desired
+	// 是否希望多显示加载屏幕一会
 	bool bWantToForceShowLoadingScreen = false;
 	if (bNeedToShowLoadingScreen)
 	{
@@ -438,10 +447,12 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 	else
 	{
 		// Don't *need* to show the screen anymore, but might still want to for a bit
+		// 如果不再需要显示加载屏幕，但可能仍然想要保留一段时间
 		const double CurrentTime = FPlatformTime::Seconds();
 		const bool bCanHoldLoadingScreen = (!GIsEditor || Settings->HoldLoadingScreenAdditionalSecsEvenInEditor);
 		const double HoldLoadingScreenAdditionalSecs = bCanHoldLoadingScreen ? LoadingScreenCVars::HoldLoadingScreenAdditionalSecs : 0.0;
 
+		// 如果 TimeLoadingScreenLastDismissed 还未初始化，则设置为当前时间
 		if (TimeLoadingScreenLastDismissed < 0.0)
 		{
 			TimeLoadingScreenLastDismissed = CurrentTime;
@@ -449,10 +460,12 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 		const double TimeSinceScreenDismissed = CurrentTime - TimeLoadingScreenLastDismissed;
 
 		// hold for an extra X seconds, to cover up streaming
+		// 在额外的时间内保持加载屏幕，以便纹理流加载
 		if ((HoldLoadingScreenAdditionalSecs > 0.0) && (TimeSinceScreenDismissed < HoldLoadingScreenAdditionalSecs))
 		{
 			// Make sure we're rendering the world at this point, so that textures will actually stream in
 			//@TODO: If bNeedToShowLoadingScreen bounces back true during this window, we won't turn this off again...
+			// 确保游戏视口正在渲染世界，以便纹理正确加载
 			UGameViewportClient* GameViewportClient = GetGameInstance()->GetGameViewportClient();
 			GameViewportClient->bDisableWorldRendering = false;
 
@@ -460,7 +473,7 @@ bool ULoadingScreenManager::ShouldShowLoadingScreen()
 			bWantToForceShowLoadingScreen = true;
 		}
 	}
-
+	// 如果需要显示加载屏幕或者希望强制显示，则返回 true
 	return bNeedToShowLoadingScreen || bWantToForceShowLoadingScreen;
 }
 

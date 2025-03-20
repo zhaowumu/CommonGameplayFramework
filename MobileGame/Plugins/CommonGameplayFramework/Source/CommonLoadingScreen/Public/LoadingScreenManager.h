@@ -5,7 +5,6 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Tickable.h"
 #include "UObject/WeakInterfacePtr.h"
-
 #include "LoadingScreenManager.generated.h"
 
 template <typename InterfaceType> class TScriptInterface;
@@ -113,15 +112,23 @@ private:
 	/** The time when we started showing the loading screen */
 	double TimeLoadingScreenShown = 0.0;
 
-	/** The time the loading screen most recently wanted to be dismissed (might still be up due to a min display duration requirement) **/
+	/** The time the loading screen most recently wanted to be dismissed (might still be up due to a min display duration requirement)
+	 * 加载屏幕最近想要被关闭的时间（由于最小显示持续时间要求，可能仍在运行）
+	 */
 	double TimeLoadingScreenLastDismissed = -1.0;
 
-	/** The time until the next log for why the loading screen is still up */
+	/** The time until the next log for why the loading screen is still up
+	 * 直到下一个日志显示加载屏幕仍处于打开状态的时间
+	 */
 	double TimeUntilNextLogHeartbeatSeconds = 0.0;
 
-	/** True when we are between PreLoadMap and PostLoadMap */
+	/** True when we are between PreLoadMap and PostLoadMap
+	 * 当我们处于PreLoadMap和PostLoadMap之间时为True
+	 */
 	bool bCurrentlyInLoadMap = false;
 
-	/** True when the loading screen is currently being shown */
+	/** True when the loading screen is currently being shown
+	 * 当前显示加载屏幕时为True
+	 */
 	bool bCurrentlyShowingLoadingScreen = false;
 };

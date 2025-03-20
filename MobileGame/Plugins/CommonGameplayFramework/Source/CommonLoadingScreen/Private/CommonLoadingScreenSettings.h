@@ -43,6 +43,7 @@ public:
 	float LoadingScreenHeartbeatHangDuration = 0.0f;
 
 	// The interval in seconds between each log of what is keeping a loading screen up (if non-zero).
+	// 保持加载屏幕打开的每个日志之间的间隔（秒）（如果非零）。
  	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s))
 	float LogLoadingScreenHeartbeatInterval = 5.0f;
 
