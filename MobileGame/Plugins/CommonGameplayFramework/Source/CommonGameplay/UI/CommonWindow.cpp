@@ -149,6 +149,25 @@ FReply UCommonWindow::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 					ParentDesktop->ShowWindowByClass(GetClass());
 				}
 
+
+				/*// 获取 FSlateUser
+				int32 UserIndex = InMouseEvent.GetUserIndex(); // 从 FDragDropEvent 获取用户索引
+				TSharedPtr<FSlateUser> SlateUser = FSlateApplication::Get().GetUser(UserIndex);
+
+				if (SlateUser.IsValid())
+				{
+					// 将 DragDropContent 置空
+					SlateUser->CancelDragDrop();
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
+													 FString::Printf(TEXT("SlateUser: %d"), UserIndex));
+				}*/
+
+				
+				/*
+				FEventReply replay =UWidgetBlueprintLibrary::Handled();
+				replay = UWidgetBlueprintLibrary::DetectDrag(replay, this, EKeys::LeftMouseButton);
+				*/
+
 				FEventReply replay = UWidgetBlueprintLibrary::DetectDragIfPressed(
 					InMouseEvent, this, EKeys::LeftMouseButton);
 				return replay.NativeReply;
@@ -172,18 +191,13 @@ void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 	{
 		UDragDropOperation* DDO = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
+		                                 FString::Printf(TEXT("DDO: %s"), *DDO->GetName()));
 
-		/*UCopyWidgetBox* showWidget = CreateWidget<UCopyWidgetBox>(
-			GetWorld(), UCommonDeveloperSettings::Get()->CopyWidgetClass.LoadSynchronous());
 
-		if (showWidget)
-		{
-			showWidget->AddChildWidgetToSlate(this);
-		}*/
+		UCommonWindow* WidgetToDrag = DuplicateObject<UCommonWindow>(this, GetWorld());
 
-		//UCommonWindow* WidgetToDrag = DuplicateObject<UCommonWindow>(this, GetWorld());
-
-		DDO->DefaultDragVisual = this;
+		DDO->DefaultDragVisual = WidgetToDrag;
 		DDO->Pivot = EDragPivot::MouseDown;
 		DDO->Offset = FVector2D(0, 0);
 		OutOperation = DDO;
@@ -195,7 +209,7 @@ void UCommonWindow::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	//InOperation->DefaultDragVisual->RemoveFromParent();
+	InOperation->DefaultDragVisual->RemoveFromParent();
 	SetRenderOpacity(1.0f);
 	FVector2D cur = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 
@@ -205,17 +219,7 @@ void UCommonWindow::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent,
 	SafeSetPosition(targetPos);
 
 	bIsDragging = false;
-
-
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-}
-
-bool UCommonWindow::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	UDragDropOperation* InOperation)
-{
-	
-	return Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-	
 }
 
 FReply UCommonWindow::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

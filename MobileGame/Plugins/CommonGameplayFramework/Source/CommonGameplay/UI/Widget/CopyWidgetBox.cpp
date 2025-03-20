@@ -11,23 +11,27 @@ void UCopyWidgetBox::AddChildWidgetToSlate(UWidget* ChildWidget)
 {
 	if (ChildWidget)
 	{
-		// **获取 SWidget**
-		TSharedRef<SWidget> ChildSlateWidget = ChildWidget->TakeWidget();
-		// **确保 SVerticalBox 存在**
-		
-		// **如果 VerticalBoxContainer 为空，就动态获取**
-		if (!VerticalBoxContainer.IsValid() && VerticalBoxWidget)
+		// **克隆一个新的 UWidget**
+		UWidget* ClonedWidget = DuplicateObject<UWidget>(ChildWidget, this);
+
+		if (ClonedWidget)
 		{
-			VerticalBoxContainer = StaticCastSharedRef<SVerticalBox>(VerticalBoxWidget->TakeWidget());
-		}
-		
-		if (VerticalBoxContainer.IsValid())
-		{
-			VerticalBoxContainer->AddSlot()
-			.AutoHeight()
-			[
-				ChildSlateWidget
-			];
+			// 获取新的 SWidget
+			TSharedRef<SWidget> NewChildSlateWidget = ClonedWidget->TakeWidget();
+
+			if (!VerticalBoxContainer.IsValid() && VerticalBoxWidget)
+			{
+				VerticalBoxContainer = StaticCastSharedRef<SVerticalBox>(VerticalBoxWidget->TakeWidget());
+			}
+
+			if (VerticalBoxContainer.IsValid())
+			{
+				VerticalBoxContainer->AddSlot()
+				                    .AutoHeight()
+				[
+					NewChildSlateWidget
+				];
+			}
 		}
 	}
 }
