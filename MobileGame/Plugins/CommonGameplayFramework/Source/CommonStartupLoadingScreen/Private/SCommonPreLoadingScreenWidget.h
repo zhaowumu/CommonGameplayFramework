@@ -11,10 +11,17 @@ class FReferenceCollector;
 class SCommonPreLoadingScreenWidget : public SCompoundWidget, public FGCObject
 {
 public:
-	SLATE_BEGIN_ARGS(SCommonPreLoadingScreenWidget) {}
-    SLATE_END_ARGS()
+	// Slate 宏，定义 UI 控件的参数
+	SLATE_BEGIN_ARGS(SCommonPreLoadingScreenWidget)
+		{
+		}
 
-    void Construct(const FArguments& InArgs);
+	SLATE_END_ARGS()
+
+	// 构造函数，用于构建 UI 控件
+	void Construct(const FArguments& InArgs);
+
+	void SetColor(FLinearColor InColor);
 
 	//~ Begin FGCObject interface
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
@@ -22,5 +29,5 @@ public:
 	//~ End FGCObject interface
 
 private:
-
+	TSharedPtr<SBorder> BorderWidget;
 };

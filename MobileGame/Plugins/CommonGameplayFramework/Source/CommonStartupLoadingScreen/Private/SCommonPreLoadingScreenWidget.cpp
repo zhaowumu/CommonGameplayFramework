@@ -10,13 +10,22 @@ class FReferenceCollector;
 
 void SCommonPreLoadingScreenWidget::Construct(const FArguments& InArgs)
 {
+	// 设置子控件为一个 SBorder，背景为黑色
 	ChildSlot
 	[
-		SNew(SBorder)
+		SAssignNew(BorderWidget, SBorder)
 		.BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush"))
-		.BorderBackgroundColor(FLinearColor::Black)
+		.BorderBackgroundColor(FLinearColor::White)
 		.Padding(0)
 	];
+}
+
+void SCommonPreLoadingScreenWidget::SetColor(FLinearColor InColor)
+{
+	if (BorderWidget.IsValid())
+	{
+		BorderWidget->SetBorderBackgroundColor(InColor);
+	}
 }
 
 void SCommonPreLoadingScreenWidget::AddReferencedObjects(FReferenceCollector& Collector)

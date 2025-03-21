@@ -38,7 +38,7 @@
     {
       "Name": "CommonStartupLoadingScreen",
       "Type": "ClientOnly",
-      "LoadingPhase": "PreLoadingScreen"
+      "LoadingPhase": "PreEarlyLoadingScreen"
     }
   ],
   "Plugins": [

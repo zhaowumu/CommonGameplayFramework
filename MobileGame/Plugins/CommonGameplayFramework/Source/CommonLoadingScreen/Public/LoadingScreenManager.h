@@ -18,8 +18,14 @@ class UWorld;
 struct FFrame;
 struct FWorldContext;
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPreLoadMapTriggered, const FString&, MapName);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPostLoadMapTriggered, const FString&, MapName);
+
+
 /**
- * Handles showing/hiding the loading screen
+ * 加载屏幕管理器
  */
 UCLASS()
 class COMMONLOADINGSCREEN_API ULoadingScreenManager : public UGameInstanceSubsystem, public FTickableGameObject
@@ -64,16 +70,20 @@ private:
 	void HandlePreLoadMap(const FWorldContext& WorldContext, const FString& MapName);
 	void HandlePostLoadMap(UWorld* World);
 
-	/** Determines if we should show or hide the loading screen. Called every frame. */
+	/** 更新加载屏幕 */
 	void UpdateLoadingScreen();
 
-	/** Returns true if we need to be showing the loading screen. */
+	/** 检查是否需要加载屏幕 */
 	bool CheckForAnyNeedToShowLoadingScreen();
 
-	/** Returns true if we want to be showing the loading screen (if we need to or are artificially forcing it on for other reasons). */
+	/** Returns true if we want to be showing the loading screen (if we need to or are artificially forcing it on for other reasons).
+	 * 如果我们想显示加载屏幕（如果我们需要或出于其他原因人为地将其打开），则返回true
+	 */
 	bool ShouldShowLoadingScreen();
 
-	/** Returns true if we are in the initial loading flow before this screen should be used */
+	/** Returns true if we are in the initial loading flow before this screen should be used
+	 * 如果我们在使用此屏幕之前处于初始加载流中，则返回true
+	 */
 	bool IsShowingInitialLoadingScreen() const;
 
 	/** Shows the loading screen. Sets up the loading screen widget on the viewport */
@@ -93,6 +103,16 @@ private:
 
 	void ChangePerformanceSettings(bool bEnabingLoadingScreen);
 
+public:
+
+	// 开始加载地图
+	UPROPERTY(BlueprintAssignable, Category = LoadingScreen)
+	FOnPreLoadMapTriggered OnPreLoadMapTriggered;
+
+	// 结束加载地图
+	UPROPERTY(BlueprintAssignable, Category = LoadingScreen)
+	FOnPostLoadMapTriggered OnPostLoadMapTriggered;
+	
 private:
 	/** Delegate broadcast when the loading screen visibility changes */
 	FOnLoadingScreenVisibilityChangedDelegate LoadingScreenVisibilityChanged;
@@ -126,6 +146,10 @@ private:
 	 * 当我们处于PreLoadMap和PostLoadMap之间时为True
 	 */
 	bool bCurrentlyInLoadMap = false;
+
+	/** 第一次加载游戏，走moviePlayer */
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	int32 LoadGameMapCount = 0;
 
 	/** True when the loading screen is currently being shown
 	 * 当前显示加载屏幕时为True
