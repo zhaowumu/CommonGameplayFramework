@@ -7,7 +7,8 @@
 #include "UObject/WeakInterfacePtr.h"
 #include "LoadingScreenManager.generated.h"
 
-template <typename InterfaceType> class TScriptInterface;
+template <typename InterfaceType>
+class TScriptInterface;
 
 class FSubsystemCollectionBase;
 class IInputProcessor;
@@ -61,11 +62,14 @@ public:
 
 	/** Called when the loading screen visibility changes  */
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnLoadingScreenVisibilityChangedDelegate, bool);
-	FORCEINLINE FOnLoadingScreenVisibilityChangedDelegate& OnLoadingScreenVisibilityChangedDelegate() { return LoadingScreenVisibilityChanged; }
+	FORCEINLINE FOnLoadingScreenVisibilityChangedDelegate& OnLoadingScreenVisibilityChangedDelegate()
+	{
+		return LoadingScreenVisibilityChanged;
+	}
 
 	void RegisterLoadingProcessor(TScriptInterface<ILoadingProcessInterface> Interface);
 	void UnregisterLoadingProcessor(TScriptInterface<ILoadingProcessInterface> Interface);
-	
+
 private:
 	void HandlePreLoadMap(const FWorldContext& WorldContext, const FString& MapName);
 	void HandlePostLoadMap(UWorld* World);
@@ -104,7 +108,6 @@ private:
 	void ChangePerformanceSettings(bool bEnabingLoadingScreen);
 
 public:
-
 	// 开始加载地图
 	UPROPERTY(BlueprintAssignable, Category = LoadingScreen)
 	FOnPreLoadMapTriggered OnPreLoadMapTriggered;
@@ -112,10 +115,14 @@ public:
 	// 结束加载地图
 	UPROPERTY(BlueprintAssignable, Category = LoadingScreen)
 	FOnPostLoadMapTriggered OnPostLoadMapTriggered;
-	
+
 private:
 	/** Delegate broadcast when the loading screen visibility changes */
 	FOnLoadingScreenVisibilityChangedDelegate LoadingScreenVisibilityChanged;
+
+	/** A reference to the loading screen widget we are displaying (if any) */
+	UPROPERTY()
+	TObjectPtr<UUserWidget> LoadingScreenUMG;
 
 	/** A reference to the loading screen widget we are displaying (if any) */
 	TSharedPtr<SWidget> LoadingScreenWidget;
@@ -155,4 +162,7 @@ private:
 	 * 当前显示加载屏幕时为True
 	 */
 	bool bCurrentlyShowingLoadingScreen = false;
+
+	int CurrentProcess = 0;
+	int TotalProcess = 0;
 };

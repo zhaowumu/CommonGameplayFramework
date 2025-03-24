@@ -33,9 +33,6 @@ public:
 	}
 
 public:
-	// 默认使用使用MoviePlayer
-	UPROPERTY(config, EditAnywhere, Category=LoadingScreen, meta=(MetaClass="/Script/UMG.UserWidget"))
-	FSoftClassPath LoadingScreenWidget;
 
 	UPROPERTY(config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> UIPolicyClass;
@@ -44,7 +41,7 @@ public:
 	TSoftObjectPtr<UDataTable> GameSettingDataTable;
 
 	// 默
-	UPROPERTY(config, EditAnywhere, Category=LoadingScreen, meta=(MetaClass="/Script/UMG.UserWidget"))
+	UPROPERTY(config, EditAnywhere, Category=GameSettings, meta=(MetaClass="/Script/UMG.UserWidget"))
 	TSoftClassPtr<UCopyWidgetBox> CopyWidgetClass;
 
 	UFUNCTION(BlueprintPure, Category=GameSettings)
