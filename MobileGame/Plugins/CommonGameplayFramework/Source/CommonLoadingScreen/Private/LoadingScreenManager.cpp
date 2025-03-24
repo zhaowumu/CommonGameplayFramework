@@ -253,8 +253,7 @@ void ULoadingScreenManager::HandlePreLoadMap(const FWorldContext& WorldContext, 
 	UE_LOG(LogLoadingScreen, Warning, TEXT("ULoadingScreenManager::HandlePreLoadMap ---正在加载地图中!>>> %s > %s >> %f" ),
 	       *FormattedMapName, *MapName, FPlatformTime::Seconds());
 
-	CurrentProcess = 0;
-	TotalProcess = 16 + ExternalLoadingProcessors.Num();
+	
 
 	OnPreLoadMapTriggered.Broadcast(FormattedMapName);
 
@@ -272,6 +271,8 @@ void ULoadingScreenManager::HandlePreLoadMap(const FWorldContext& WorldContext, 
 		{
 			UpdateLoadingScreen();
 		}
+		CurrentProcess = 0;
+		
 	}
 }
 
