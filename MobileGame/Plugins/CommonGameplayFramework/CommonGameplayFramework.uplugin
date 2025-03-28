@@ -73,6 +73,10 @@
     {
       "Name": "AudioModulation",
       "Enabled": true
+    },
+    {
+      "Name": "ChunkDownloader",
+      "Enabled": true
     }
   ]
 }

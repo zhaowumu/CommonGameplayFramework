@@ -122,8 +122,10 @@ void UGameUIPolicy::AddLayoutToViewport(UCommonLocalPlayer* LocalPlayer, UPrimar
 	UE_LOG(LogCommon, Log, TEXT("[%s] is adding player [%s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
 
 	Layout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
-	Layout->AddToPlayerScreen(1000);
-
+	// TODO 这里AddToPlayerScreen会导致JoyStick屏蔽按钮失效
+	
+	//Layout->AddToPlayerScreen(1000);
+	Layout->AddToViewport(1000);
 	OnRootLayoutAddedToViewport(LocalPlayer, Layout);
 }
 

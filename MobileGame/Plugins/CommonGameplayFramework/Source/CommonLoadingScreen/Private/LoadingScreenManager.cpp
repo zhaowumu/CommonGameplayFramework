@@ -514,12 +514,12 @@ bool ULoadingScreenManager::CheckForAnyNeedToShowLoadingScreen()
 
 bool ULoadingScreenManager::ShouldShowLoadingScreen()
 {
-	/*// 第一次加载地图时，显示Logo影片
+	// 第一次加载地图时，显示Logo影片
 	if (LoadGameMapCount < (GIsEditor ? 1 : 2))
 	{
 		DebugReasonForShowingOrHidingLoadingScreen = FString(TEXT("first Loading"));
 		return false;
-	}*/
+	}
 
 	const UCommonLoadingScreenSettings* Settings = GetDefault<UCommonLoadingScreenSettings>();
 

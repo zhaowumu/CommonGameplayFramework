@@ -4,7 +4,9 @@
 
 #include "Engine/GameInstance.h"
 #include "Kismet/BlueprintPlatformLibrary.h"
-
+#include "ChunkDownloader.h"
+#include "Interfaces/IHttpRequest.h"
+#include "Misc/CoreDelegates.h"
 #include "CommonGameInstance.generated.h"
 
 enum class ECommonUserAvailability : uint8;
@@ -22,6 +24,34 @@ struct FGameplayTag;
 
 
 /*
+ * 游戏版本信息
+ */
+USTRUCT(BlueprintType)
+struct FCommonGameVersion
+{
+	GENERATED_BODY()
+
+public:
+	// 主版本
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MainVersion = 1.0f;
+	// 补丁版本
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PitchVersion = 0.0f;
+};
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FManifestCompleteDelegate, bool, Succeeded);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDownloadCompleteDelegate, bool, Succeeded);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMountCompleteDelegate, bool, Succeeded);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitGameCompleteDelegate, bool, Succeeded);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitGameMessageDelegate, FString, Message);
+
+/*
  * 用于处理游戏实例的通用逻辑，包括用户管理、会话管理、错误处理等
  * 抽象类，不能被直接实例化，并且它的配置信息存储在 Game 配置文件中。
  */
@@ -32,7 +62,11 @@ class COMMONGAMEPLAY_API UCommonGameInstance : public UGameInstance
 
 public:
 	UCommonGameInstance(const FObjectInitializer& ObjectInitializer);
-	
+
+	virtual void Init() override;
+	virtual void Shutdown() override;
+
+
 	/** Handles errors/warnings from CommonUser, can be overridden per game
 	 * 处理来自CommonUser的错误/警告，可以按游戏覆盖
 	 */
@@ -43,13 +77,17 @@ public:
 	 * 处理权限已更改
 	 */
 	UFUNCTION()
-	virtual void HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability);
+	virtual void HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege,
+	                                    ECommonUserAvailability OldAvailability,
+	                                    ECommonUserAvailability NewAvailability);
 
 	/*
 	 * 处理用户已初始化
 	 */
 	UFUNCTION()
-	virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
+	virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error,
+	                                    ECommonUserPrivilege RequestedPrivilege,
+	                                    ECommonUserOnlineContext OnlineContext);
 
 	/** Call to reset user and session state, usually because a player has been disconnected
 	 * 重置用户和会话状态，通常是因为玩家已断开连接
@@ -64,7 +102,9 @@ public:
 	 *   If not, cache the requested session and instruct the game to get into a state where the session can be joined (ResetGameAndJoinRequestedSession)
 	 */
 	/** Handles user accepting a session invite from an external source (for example, a platform overlay). Intended to be overridden per game. */
-	virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult);
+	virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId,
+	                                    UCommonSession_SearchResult* InRequestedSession,
+	                                    const FOnlineResultInformation& RequestedSessionResult);
 
 	/** Handles OSS request that the session be destroyed
 	 * 处理OSS请求销毁会话
@@ -87,11 +127,74 @@ public:
 	virtual void JoinRequestedSession();
 	/** Get the game into a state to join the requested session */
 	virtual void ResetGameAndJoinRequestedSession();
-	
+
 	virtual int32 AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId) override;
 	virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;
-	virtual void Init() override;
 	virtual void ReturnToMainMenu() override;
+
+
+	// ===================
+
+
+	UFUNCTION(BlueprintCallable, Category = "Patching")
+	void UpdateServerProjectVersion();
+
+	void OnServerVersionReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	void InitChunkData();
+
+	UPROPERTY(BlueprintAssignable, Category="Patching")
+	FInitGameCompleteDelegate OnInitGameComplete;
+
+	UPROPERTY(BlueprintAssignable, Category="Patching")
+	FManifestCompleteDelegate OnChunkManifestComplete;
+
+	UPROPERTY(BlueprintAssignable, Category="Patching")
+	FDownloadCompleteDelegate OnChunkDownloadComplete;
+
+	UPROPERTY(BlueprintAssignable, Category="Patching")
+	FMountCompleteDelegate OnChunkMountComplete;
+
+	UPROPERTY(BlueprintAssignable, Category="Patching")
+	FInitGameMessageDelegate OnInitGameMessage;
+
+	// 启动游戏补丁操作。如果补丁清单不是最新的，则返回false。*/
+	UFUNCTION(BlueprintCallable, Category = "Patching")
+	bool PatchGame();
+
+
+	UFUNCTION(BlueprintPure, Category = "Patching|Stats")
+	void GetChunkLoadingProgress(int32& BytesDownloaded, int32& TotalBytesToDownload, float& DownloadPercent,
+	                             int32& ChunksMounted, int32& TotalChunksToMount, float& MountPercent) const;
+
+protected:
+	UPROPERTY()
+	FString ServerVersion = FString();
+
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	FString PatchingState = FString();
+
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	bool IsPatching = false;
+
+	//用我们网站上托管的清单文件追踪本地清单文件是否为最新文件。
+	bool bIsDownloadManifestUpdate;
+
+	//在文件块下载进程完成时调用
+	void OnChunkManifestUpdateOver(bool bSuccess);
+
+	// 在文件块下载进程完成时调用
+	void OnChunkDownloadOver(bool bSuccess);
+
+	// ChunkDownloader监听加载模式完成时调用
+	void OnChunkLoadingModeOver(bool bSuccess);
+
+	// ChunkDownloader完成挂载文件块时调用
+	void OnChunkMountOver(bool bSuccess);
+
+	// 要尝试和下载的文件块ID列表
+	UPROPERTY(EditDefaultsOnly, Category="Patching")
+	TArray<int32> ChunkDownloadList;
 
 private:
 	/** This is the primary player*/
